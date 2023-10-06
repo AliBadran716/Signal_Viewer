@@ -407,21 +407,21 @@ color: rgba(0, 0, 0, 0.50);</string>
           <item row="0" column="0" rowspan="3">
            <layout class="QVBoxLayout" name="verticalLayout_8">
             <item>
-             <widget class="QRadioButton" name="radioButton_4">
+             <widget class="QRadioButton" name="graph1_radio_btn">
               <property name="text">
                <string>Graph1</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_5">
+             <widget class="QRadioButton" name="graph2_radio_btn">
               <property name="text">
                <string>Graph 2</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_6">
+             <widget class="QRadioButton" name="link_radio_btn">
               <property name="text">
                <string>Link</string>
               </property>
@@ -430,7 +430,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </layout>
           </item>
           <item row="1" column="4">
-           <widget class="QPushButton" name="pushButton_9">
+           <widget class="QPushButton" name="rewind_push_btn">
             <property name="styleSheet">
              <string notr="true">background-color: white;</string>
             </property>
@@ -450,7 +450,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </widget>
           </item>
           <item row="1" column="3">
-           <widget class="QPushButton" name="pushButton_7">
+           <widget class="QPushButton" name="play_push_btn">
             <property name="styleSheet">
              <string notr="true">background-color: white;</string>
             </property>
@@ -467,7 +467,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QPushButton" name="pushButton_8">
+           <widget class="QPushButton" name="speed_push_btn">
             <property name="styleSheet">
              <string notr="true">background-color: white;</string>
             </property>
