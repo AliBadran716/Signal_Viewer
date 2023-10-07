@@ -44,7 +44,7 @@ color: rgba(0, 0, 0, 0.50);</string>
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -923,7 +923,7 @@ color: rgba(0, 0, 0, 0.50);</string>
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen"/>
+    <addaction name="open_menu_btn"/>
    </widget>
    <widget class="QMenu" name="menuExport">
     <property name="title">
@@ -940,7 +940,7 @@ color: rgba(0, 0, 0, 0.50);</string>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionOpen">
+  <action name="open_menu_btn">
    <property name="text">
     <string>Open</string>
    </property>

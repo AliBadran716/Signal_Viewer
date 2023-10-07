@@ -1,23 +1,26 @@
-#PyQr5 importing
+# PyQr5 importing
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.uic import loadUiType #Live updating the design
+from PyQt5.uic import loadUiType  # Live updating the design
 
 import os
 from os import path
 import sys
 
-FORM_CLASS,_ = loadUiType(path.join(path.dirname(__file__), "main.ui")) # connects the Ui file with the Python file
+FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main.ui"))  # connects the Ui file with the Python file
 
-class MainApp (QMainWindow,FORM_CLASS): # go to the main window in the form_class file
-    def __init__(self,parent=None): #constructor to intiate the main window  in the design
-        super(MainApp,self).__init__(parent)
+
+class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_class file
+    def __init__(self, parent=None):  # constructor to intiate the main window  in the design
+        super(MainApp, self).__init__(parent)
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.Handle_btn()
 
+
     def Handle_btn(self):
+        self.open_menu_btn.triggered.connect(self.add_new_tab)
         self.graph1_radio_btn.toggled.connect(self.graph1_selected)
         self.graph2_radio_btn.toggled.connect(self.graph2_selected)
         self.link_radio_btn.toggled.connect(self.link_selected)
@@ -33,9 +36,11 @@ class MainApp (QMainWindow,FORM_CLASS): # go to the main window in the form_clas
         self.move_y_slider.valueChanged.connect(self.move_y_slider_update)
         self.tab_widget_g1.currentChanged.connect(self.tab_widget_g1_changed)
         self.tab_widget_g2.currentChanged.connect(self.tab_widget_g2_changed)
+
     def graph1_selected(self, enabled):
         if enabled:
             print('graph1')
+
     def graph2_selected(self, enabled):
         if enabled:
             print('graph2')
@@ -47,9 +52,8 @@ class MainApp (QMainWindow,FORM_CLASS): # go to the main window in the form_clas
     def speed_changed(self):
         print("speed change")
 
-    def play_changed(self,state):
+    def play_changed(self, state):
         print("play")
-
 
     def rewind_changed(self):
         print("rewind")
@@ -97,14 +101,17 @@ class MainApp (QMainWindow,FORM_CLASS): # go to the main window in the form_clas
     def line_edit_g1_selected(self):
         print(self.line_edit_g1.text())
 
+    def add_new_tab(self):
+        combo = QComboBox(self)
+        combo.addItem("red")
+        self.tab_widget_g1.addTab(combo, 'new Tab')
 
-
-
-def main() : #method to start app
+def main():  # method to start app
     app = QApplication(sys.argv)
     window = MainApp()
     window.show()
-    app.exec_() #infinte Loop
+    app.exec_()  # infinte Loop
+
 
 if __name__ == '__main__':
     main()
