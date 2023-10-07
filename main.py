@@ -35,6 +35,54 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.Handle_btn()
         self.signals_data = {}
         self.count_signals = 0;
+        self.Handle_graph()
+        self.end_indx = 50
+        self.start_1 = 0
+        self.end = 0.154
+
+    def Handle_graph(self ):
+        #self.graphicsView = PlotWidget(self.widget)
+        self.graphicsView.setObjectName("graphicsView")
+        df = pd.read_csv('normal_ecg.csv')
+        self.x = df.iloc[:, 0].tolist()
+        #self.x = list(range(100))  # 100 time points
+        #self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
+        self.y = df.iloc[:, 1].tolist()
+
+        self.graphicsView.setBackground('w')
+        self.graphicsView.setXRange(0, 0.154)
+        pen = pg.mkPen(color=(255, 0, 0))
+        self.data_line = self.graphicsView.plot(self.x, self.y, pen=pen)
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(50)
+        self.timer.timeout.connect(self.update_plot_data)
+        self.timer.start()
+
+    def update_plot_data(self  ):
+        self.end_indx+=10
+        self.start_1 = self.start_1 + 0.0022
+        self.end = self.end + 0.0022
+        self.nx =[]
+        self.nx = self.x[:self.end_indx]
+        self.ny = []
+        self.ny = self.y[:self.end_indx]
+        if (self.end_indx <= 500 ):
+            self.graphicsView.setXRange(0, 0.154)
+        if(self.end_indx > 500):
+            self.graphicsView.setXRange(self.start_1, self.end)
+
+        if(self.end_indx == 2560):
+            self.timer.stop()
+        #self.x.append(self.x[-1] + 0.00025)  # Add a new value 1 higher than the last.
+        #self.y = self.y[:self.end_indx]
+        #self.y = self.y[:end_indx]  # Remove the first
+        #self.y.append( randint(0,100))  # Add a new random value.
+        #self.end_indx = self.end_indx + 500
+        #self.x = self.x[:end_indx]  # Remove the first y element.
+        #self.x = self.x[:self.end_indx]
+
+        self.data_line.setData(self.nx, self.ny)  # Update the data.
+        return self.data_line
 
 
     def Handle_btn(self):
