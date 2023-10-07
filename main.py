@@ -3,6 +3,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.uic import loadUiType  # Live updating the design
+import pyqtgraph as pg
+import matplotlib.pyplot as plt
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
+
+from pyqtgraph import PlotWidget, plot
+from PyQt5.QtWidgets import QFileDialog, QGraphicsScene
+import numpy as np
 
 import os
 from os import path
@@ -105,6 +112,14 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         combo = QComboBox(self)
         combo.addItem("red")
         self.tab_widget_g1.addTab(combo, 'new Tab')
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)", options=options)
+        print(file_name)
+
+
+
+
 
 def main():  # method to start app
     app = QApplication(sys.argv)

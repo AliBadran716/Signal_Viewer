@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1188</width>
-    <height>615</height>
+    <height>588</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -503,7 +503,7 @@ color: rgba(0, 0, 0, 0.50);</string>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QGraphicsView" name="graphicsView">
+           <widget class="PlotWidget" name="graphicsView">
             <property name="styleSheet">
              <string notr="true">color: #000;
 padding: 6px 12px;
@@ -528,7 +528,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </widget>
           </item>
           <item>
-           <widget class="QGraphicsView" name="graphicsView_2"/>
+           <widget class="PlotWidget" name="graphicsView_2"/>
           </item>
          </layout>
         </item>
@@ -946,6 +946,13 @@ color: rgba(0, 0, 0, 0.50);</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>pyqtgraph</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
