@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from pyqtgraph import PlotWidget, plot
 from PyQt5.QtWidgets import QFileDialog, QGraphicsScene
 import numpy as np
-
+import pandas as pd
 import os
 from os import path
 import sys
@@ -114,8 +114,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.tab_widget_g1.addTab(combo, 'new Tab')
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)", options=options)
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)", options=options)
+        file_name = file_path.split("/")[-1]
         print(file_name)
+        signal_data = pd.read_csv(file_name)
 
 
 
