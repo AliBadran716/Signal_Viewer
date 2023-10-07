@@ -39,12 +39,12 @@ color: rgba(0, 0, 0, 0.50);</string>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="1" column="1">
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QTabWidget" name="tab_widget_g1">
         <property name="styleSheet">
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -62,6 +62,11 @@ color: rgba(0, 0, 0, 0.50);</string>
             </item>
             <item>
              <widget class="QComboBox" name="comboBox">
+              <item>
+               <property name="text">
+                <string>-----</string>
+               </property>
+              </item>
               <item>
                <property name="text">
                 <string>a7mr</string>
@@ -169,6 +174,11 @@ color: rgba(0, 0, 0, 0.50);</string>
              <widget class="QComboBox" name="comboBox_2">
               <item>
                <property name="text">
+                <string>-----</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>a7mr</string>
                </property>
               </item>
@@ -271,7 +281,12 @@ color: rgba(0, 0, 0, 0.50);</string>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="comboBox_3">
+             <widget class="QComboBox" name="color_g1_combo_btn">
+              <item>
+               <property name="text">
+                <string>-----</string>
+               </property>
+              </item>
               <item>
                <property name="text">
                 <string>a7mr</string>
@@ -323,7 +338,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_3">
+           <widget class="QCheckBox" name="hide_g1_check_btn">
             <property name="text">
              <string>Hide Signal</string>
             </property>
@@ -355,7 +370,14 @@ color: rgba(0, 0, 0, 0.50);</string>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit_3"/>
+             <widget class="QLineEdit" name="line_edit_g1"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="save_lbl_g1_btn">
+              <property name="text">
+               <string>Save</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -398,7 +420,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </widget>
           </item>
           <item row="1" column="5">
-           <widget class="QSlider" name="horizontalSlider_8">
+           <widget class="QSlider" name="zoom_slider">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -440,7 +462,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </widget>
           </item>
           <item row="0" column="8" rowspan="3">
-           <widget class="QSlider" name="verticalSlider">
+           <widget class="QSlider" name="move_y_slider">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -460,7 +482,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </widget>
           </item>
           <item row="1" column="6">
-           <widget class="QSlider" name="horizontalSlider_6">
+           <widget class="QSlider" name="move_x_slider">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -513,12 +535,12 @@ color: rgba(0, 0, 0, 0.50);</string>
        </layout>
       </item>
       <item row="3" column="1">
-       <widget class="QTabWidget" name="tabWidget_2">
+       <widget class="QTabWidget" name="tab_widget_g2">
         <property name="styleSheet">
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
@@ -536,6 +558,11 @@ color: rgba(0, 0, 0, 0.50);</string>
             </item>
             <item>
              <widget class="QComboBox" name="comboBox_4">
+              <item>
+               <property name="text">
+                <string>-----</string>
+               </property>
+              </item>
               <item>
                <property name="text">
                 <string>a7mr</string>
@@ -643,6 +670,11 @@ color: rgba(0, 0, 0, 0.50);</string>
              <widget class="QComboBox" name="comboBox_5">
               <item>
                <property name="text">
+                <string>-----</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>a7mr</string>
                </property>
               </item>
@@ -748,6 +780,11 @@ color: rgba(0, 0, 0, 0.50);</string>
              <widget class="QComboBox" name="comboBox_6">
               <item>
                <property name="text">
+                <string>-----</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>a7mr</string>
                </property>
               </item>
@@ -797,7 +834,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_6">
+           <widget class="QCheckBox" name="hide_g2_check_btn">
             <property name="text">
              <string>Hide Signal</string>
             </property>
