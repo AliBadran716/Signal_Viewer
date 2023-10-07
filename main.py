@@ -33,6 +33,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         num_tabs = 1
         self.setupUi(self)
         self.Handle_btn()
+        self.signals_data = {}
+        self.count_signals = 0;
 
 
     def Handle_btn(self):
@@ -122,9 +124,22 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)", options=options)
-        file_name = file_path.split("/")[-1]
-        print(file_name)
-        signal_data = pd.read_csv(file_name)
+        if file_path:
+            self.count_signals += 1
+            file_name = file_path.split("/")[-1]
+        #print(file_name)
+            signal_data = pd.read_csv(file_name)
+        #print(signal_data)
+            time_column = signal_data.iloc[:, 0]  
+            values_column = signal_data.iloc[:, 1]  
+        # Convert the extracted columns to lists 
+            time_values = time_column.tolist()
+            v_values = values_column.tolist()
+        # print(time_values)
+        # print(v_values)
+            print(self.count_signals)
+            self.signals_data[self.count_signals] = [time_values,v_values, 'red',self.count_signals,False]
+            print(self.signals_data[self.count_signals][2])
 
     def gen_pdf(self):
         pdf_filename = 'empty_pdf.pdf'
