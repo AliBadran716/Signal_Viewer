@@ -44,237 +44,17 @@ color: rgba(0, 0, 0, 0.50);</string>
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="tab_0">
          <attribute name="title">
           <string>Sig_1</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Color</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBox">
-              <item>
-               <property name="text">
-                <string>-----</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>a7mr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>a5dr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>azra2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>zengy</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>orange</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>bida</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>7</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="checkBox">
-            <property name="text">
-             <string>Hide Signal</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>7</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Label</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="lineEdit"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_3">
-         <attribute name="title">
-          <string>Sig_2</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Color</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBox_2">
-              <item>
-               <property name="text">
-                <string>-----</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>a7mr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>a5dr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>azra2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>zengy</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>orange</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>bida</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_8">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>7</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="checkBox_2">
-            <property name="text">
-             <string>Hide Signal</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_9">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>7</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Label</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="lineEdit_2"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_2">
-         <attribute name="title">
-          <string>Sig_3</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel" name="color_lbl">
               <property name="text">
                <string>Color</string>
               </property>
@@ -540,7 +320,7 @@ color: rgba(0, 0, 0, 0.50);</string>
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
@@ -550,14 +330,14 @@ color: rgba(0, 0, 0, 0.50);</string>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
-             <widget class="QLabel" name="label_10">
+             <widget class="QLabel" name="color_lbl_2">
               <property name="text">
                <string>Color</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="comboBox_4">
+             <widget class="QComboBox" name="color_g2_combo_btn">
               <item>
                <property name="text">
                 <string>-----</string>
@@ -614,7 +394,7 @@ color: rgba(0, 0, 0, 0.50);</string>
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_4">
+           <widget class="QCheckBox" name="hide_g2_check_btn">
             <property name="text">
              <string>Hide Signal</string>
             </property>
@@ -646,227 +426,14 @@ color: rgba(0, 0, 0, 0.50);</string>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit_4"/>
+             <widget class="QLineEdit" name="line_edit_g2"/>
             </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_5">
-         <attribute name="title">
-          <string>Sig_2</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_9">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
-             <widget class="QLabel" name="label_12">
+             <widget class="QPushButton" name="save_lbl_g2_btn">
               <property name="text">
-               <string>Color</string>
+               <string>Save</string>
               </property>
              </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBox_5">
-              <item>
-               <property name="text">
-                <string>-----</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>a7mr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>a5dr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>azra2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>zengy</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>orange</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>bida</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_10">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>7</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="checkBox_5">
-            <property name="text">
-             <string>Hide Signal</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_11">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>7</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
-            <item>
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>Label</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="lineEdit_5"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_6">
-         <attribute name="title">
-          <string>Sig_3</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_10">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
-            <item>
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>Color</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBox_6">
-              <item>
-               <property name="text">
-                <string>-----</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>a7mr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>a5dr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>azra2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>zengy</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>orange</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>bida</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_14">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>7</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="hide_g2_check_btn">
-            <property name="text">
-             <string>Hide Signal</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_15">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>7</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_13">
-            <item>
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>Label</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="lineEdit_6"/>
             </item>
            </layout>
           </item>
@@ -929,6 +496,7 @@ color: rgba(0, 0, 0, 0.50);</string>
     <property name="title">
      <string>Export</string>
     </property>
+    <addaction name="make_pdf_btn"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -943,6 +511,11 @@ color: rgba(0, 0, 0, 0.50);</string>
   <action name="open_menu_btn">
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="make_pdf_btn">
+   <property name="text">
+    <string>pdf</string>
    </property>
   </action>
  </widget>
