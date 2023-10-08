@@ -196,19 +196,29 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             print(self.signals_data[self.count_signals][2])
 
     def gen_pdf(self):
-        pdf_filename = 'empty_pdf.pdf'
-        c = canvas.Canvas(pdf_filename, pagesize=letter)
-        c.save()
-        print(f'Empty PDF saved as {pdf_filename}')
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        dir_path = QFileDialog.getExistingDirectory(self, "Select Directory", options=options)
 
-        if dir_path:
-            pdf_filename = f'{dir_path}/empty_pdf.pdf'
-            c = canvas.Canvas(pdf_filename, pagesize=letter)
-            c.save()
-            print(f'Empty PDF saved as {pdf_filename}')
+        # Prompt the user to choose the destination directory and file name
+        file_dialog = QFileDialog(self)
+        file_dialog.setWindowTitle("Save PDF")
+        file_dialog.setFileMode(QFileDialog.AnyFile)
+        file_dialog.setNameFilter("PDF files (*.pdf)")
+        file_dialog.setAcceptMode(QFileDialog.AcceptSave)
+
+        if file_dialog.exec():
+            selected_files = file_dialog.selectedFiles()
+
+            if selected_files:
+                pdf_filename = selected_files[0]
+
+                if not pdf_filename.lower().endswith(".pdf"):
+                    # Ensure the file has a .pdf extension
+                    pdf_filename += ".pdf"
+
+                c = canvas.Canvas(pdf_filename, pagesize=letter)
+                c.save()
+                print(f'Empty PDF saved as {pdf_filename}')
 
     def graph1_selected(self, enabled):
         if enabled:
