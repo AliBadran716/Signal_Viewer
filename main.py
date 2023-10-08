@@ -39,11 +39,12 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.end_indx = 50
         self.start_1 = 0
         self.end = 0.154
+        self.loaddata()
 
     def Handle_graph(self ):
         #self.graphicsView = PlotWidget(self.widget)
         self.graphicsView.setObjectName("graphicsView")
-        df = pd.read_csv('normal_ecg.csv')
+        df = pd.read_csv('normal_emg.csv')
         self.x = df.iloc[:, 0].tolist()
         #self.x = list(range(100))  # 100 time points
         #self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
@@ -51,6 +52,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
         self.graphicsView.setBackground('w')
         self.graphicsView.setXRange(0, 0.154)
+        self.graphicsView.setYRange(-1, 1)
         pen = pg.mkPen(color=(255, 0, 0))
         self.data_line = self.graphicsView.plot(self.x, self.y, pen=pen)
         self.timer = QtCore.QTimer()
@@ -59,20 +61,24 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.timer.start()
 
     def update_plot_data(self  ):
-        self.end_indx+=10
-        self.start_1 = self.start_1 + 0.0022
-        self.end = self.end + 0.0022
+        self.end_indx+=9
+        if(self.end_indx>=400 and self.end_indx<2560):
+            self.start_1 = self.start_1 + 0.0022
+            self.end = self.end + 0.0022 
         self.nx =[]
         self.nx = self.x[:self.end_indx]
         self.ny = []
         self.ny = self.y[:self.end_indx]
         if (self.end_indx <= 500 ):
             self.graphicsView.setXRange(0, 0.154)
-        if(self.end_indx > 500):
-            self.graphicsView.setXRange(self.start_1, self.end)
+        else:
+           if(self.end_indx > 500):
+              self.graphicsView.setXRange(self.start_1, self.end)
 
         if(self.end_indx == 2560):
             self.timer.stop()
+        self.data_line.setData(self.nx, self.ny) 
+    
         #self.x.append(self.x[-1] + 0.00025)  # Add a new value 1 higher than the last.
         #self.y = self.y[:self.end_indx]
         #self.y = self.y[:end_indx]  # Remove the first
@@ -81,7 +87,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         #self.x = self.x[:end_indx]  # Remove the first y element.
         #self.x = self.x[:self.end_indx]
 
-        self.data_line.setData(self.nx, self.ny)  # Update the data.
+          # Update the data.
         return self.data_line
 
 
@@ -194,6 +200,15 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         c = canvas.Canvas(pdf_filename, pagesize=letter)
         c.save()
         print(f'Empty PDF saved as {pdf_filename}')
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        dir_path = QFileDialog.getExistingDirectory(self, "Select Directory", options=options)
+
+        if dir_path:
+            pdf_filename = f'{dir_path}/empty_pdf.pdf'
+            c = canvas.Canvas(pdf_filename, pagesize=letter)
+            c.save()
+            print(f'Empty PDF saved as {pdf_filename}')
 
     def graph1_selected(self, enabled):
         if enabled:
@@ -258,6 +273,26 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     def line_edit_g2_selected(self):
         print(self.line_edit_g2.text())
+
+    def loaddata(self):
+        signal = {
+            "mean": "----",
+            "std": "----",
+            "duration": "----",
+            "min": "----",
+            "max": "----"
+        }
+
+        self.tableWidget.setColumnCount(len(signal))
+
+        column = 0
+        for key, value in signal.items():
+            self.tableWidget.setItem(0, column, QtWidgets.QTableWidgetItem(value))
+            self.tableWidget.setItem(1, column, QtWidgets.QTableWidgetItem(value))
+            self.tableWidget.setItem(2, column, QtWidgets.QTableWidgetItem(value))
+            self.tableWidget.setItem(3, column, QtWidgets.QTableWidgetItem(value))
+            self.tableWidget.setItem(4, column, QtWidgets.QTableWidgetItem(value))
+            column += 1    
 
 def main():  # method to start app
     app = QApplication(sys.argv)
