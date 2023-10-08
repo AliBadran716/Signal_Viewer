@@ -279,32 +279,17 @@ color: rgba(0, 0, 0, 0.50);</string>
                 </item>
                 <item>
                  <property name="text">
-                  <string>a7mr</string>
+                  <string>Red</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>a5dr</string>
+                  <string>Blue</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>azra2</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>zengy</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>orange</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>bida</string>
+                  <string>Green</string>
                  </property>
                 </item>
                </widget>
@@ -399,32 +384,17 @@ color: rgba(0, 0, 0, 0.50);</string>
                 </item>
                 <item>
                  <property name="text">
-                  <string>a7mr</string>
+                  <string>Red</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>a5dr</string>
+                  <string>Blue</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>azra2</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>zengy</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>orange</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>bida</string>
+                  <string>Green</string>
                  </property>
                 </item>
                </widget>

@@ -33,6 +33,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         num_tabs = 1
         self.setupUi(self)
         self.Handle_btn()
+        self.shortcuts()
         self.signals_data = {}
         self.count_signals = 0;
         self.end_indx = 50
@@ -109,8 +110,31 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.hide_g2_check_btn.stateChanged.connect(self.hide_g2_btn_checked)
         self.color_g1_combo_btn.activated[str].connect(self.color_combo_selected)
         self.color_g2_combo_btn.activated[str].connect(self.color_combo_selected)
-        self.save_lbl_g1_btn.clicked.connect(self.line_edit_g1_selected)
-        self.save_lbl_g2_btn.clicked.connect(self.line_edit_g2_selected)
+        self.save_lbl_g1_btn.clicked.connect(self.save_changes_g1)
+        self.save_lbl_g2_btn.clicked.connect(self.save_changes_g2)
+        self.comboBox.currentIndexChanged.connect(self.on_combobox_selection)
+
+    
+    def shortcuts(self):
+        # defining shortcuts
+        self.sc_open = QShortcut(QKeySequence('Ctrl+O'), self)
+        self.sc_export = QShortcut(QKeySequence('Ctrl+E'), self)
+        self.sc_g1 = QShortcut(QKeySequence('Ctrl+1'), self)
+        self.sc_g2 = QShortcut(QKeySequence('Ctrl+2'), self)
+        self.sc_link = QShortcut(QKeySequence('Ctrl+L'), self)
+        self.sc_speed = QShortcut(QKeySequence('Ctrl+S'), self)
+        self.sc_play = QShortcut(QKeySequence(' '), self)
+        self.sc_rewind = QShortcut(QKeySequence('Ctrl+R'), self)
+
+        # activating shortcuts
+        self.sc_open.activated.connect(self.add_new_signal)
+        self.sc_export.activated.connect(self.gen_pdf)
+        self.sc_g1.activated.connect(self.graph1_selected)
+        self.sc_g2.activated.connect(self.graph2_selected)
+        self.sc_link.activated.connect(self.link_selected)
+        self.sc_speed.activated.connect(self.speed_changed)
+        self.sc_play.activated.connect(self.play_changed)
+        self.sc_rewind.activated.connect(self.rewind_changed)
 
 
 
@@ -133,10 +157,37 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # print(time_values)
         # print(v_values)
             #print(self.count_signals)
-            self.signals_data[self.count_signals] = [time_values,v_values, 'red',self.count_signals,False]
-            #print(self.signals_data[self.count_signals][2])
+            self.signals_data[self.count_signals] = [time_values,v_values, 'Red',f"{'Signal'} - {self.count_signals}",False]
+            print(self.signals_data[self.count_signals][3])
             self.comboBox.addItem(f"{'Signal'} - {self.count_signals}")
             self.Handle_graph(file_name)
+    
+
+    def on_combobox_selection(self):
+        selected_item_index = self.comboBox.currentIndex()
+        print(selected_item_index)
+        self.color_g1_combo_btn.setCurrentText(self.signals_data[selected_item_index][2])
+        self.line_edit_g1.setText(self.signals_data[selected_item_index][3])
+        self.hide_g1_check_btn.setChecked(self.signals_data[selected_item_index][4])
+
+        print(self.signals_data[selected_item_index][2])
+        
+
+    def save_changes_g1(self):
+        selected_item_index = self.comboBox.currentIndex()
+        label_text = self.line_edit_g1.text()
+        # Get the selected color from the ComboBox
+        selected_color = self.color_g1_combo_btn.currentText()
+        checkbox_checked = self.hide_g1_check_btn.isChecked()
+        self.signals_data[selected_item_index][2] = selected_color
+        self.signals_data[selected_item_index][3] = label_text
+        self.signals_data[selected_item_index][4] = checkbox_checked
+        #print(self.signals_data[selected_item_index][2])
+        #print(self.signals_data[selected_item_index][3])
+        #print(self.signals_data[selected_item_index][4])
+        #print(checkbox_checked)
+        #print(selected_color)    
+
 
 
 
@@ -166,22 +217,22 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 c.save()
                 print(f'Empty PDF saved as {pdf_filename}')
 
-    def graph1_selected(self, enabled):
-        if enabled:
+    def graph1_selected(self ):
+       
             print('graph1')
 
-    def graph2_selected(self, enabled):
-        if enabled:
+    def graph2_selected(self):
+ 
             print('graph2')
 
-    def link_selected(self, enabled):
-        if enabled:
+    def link_selected(self):
+   
             print('link')
 
     def speed_changed(self):
         print("speed change")
 
-    def play_changed(self, state):
+    def play_changed(self):
         print("play")
 
     def rewind_changed(self):
@@ -224,10 +275,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def color_combo_selected(self, text):
         print(text)
 
-    def line_edit_g1_selected(self):
-        print(self.line_edit_g1.text())
+   
 
-    def line_edit_g2_selected(self):
+
+    def save_changes_g2(self):
         print(self.line_edit_g2.text())
 
     def loaddata(self):
