@@ -93,7 +93,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     def Handle_btn(self):
         # menu buttons
-        self.open_menu_btn.triggered.connect(self.add_new_tab)
+        self.open_menu_btn.triggered.connect(self.add_new_signal)
         self.make_pdf_btn.triggered.connect(self.gen_pdf)
         # graph buttons
         self.graph1_radio_btn.toggled.connect(self.graph1_selected)
@@ -112,69 +112,11 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.color_g2_combo_btn.activated[str].connect(self.color_combo_selected)
         self.save_lbl_g1_btn.clicked.connect(self.line_edit_g1_selected)
         self.save_lbl_g2_btn.clicked.connect(self.line_edit_g2_selected)
-        self.tab_widget_g1.currentChanged.connect(self.tab_widget_g1_changed)
-        self.tab_widget_g2.currentChanged.connect(self.tab_widget_g2_changed)
 
 
-    def create_new_tab(self):
-        # new tab creating
-        self.tab_1 = QtWidgets.QWidget()
-        self.tab_1.setObjectName("tab_1")
-        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.tab_1)
-        self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        # creating color label
-        self.color_lbl = QtWidgets.QLabel(self.tab_1)
-        self.color_lbl.setObjectName("color_lbl")
-        self.color_lbl.setText(_translate("MainWindow", "Color"))
-        self.horizontalLayout_6.addWidget(self.color_lbl)
-        # creating color combo box
-        self.color_g1_combo_btn = QtWidgets.QComboBox(self.tab_1)
-        self.color_g1_combo_btn.setObjectName("color_g1_combo_btn")
-        color_list = ["-----", "red", "blue", "green", "orange"]
-        self.color_g1_combo_btn.addItems(color_list)
-        self.horizontalLayout_6.addWidget(self.color_g1_combo_btn)
-        self.verticalLayout_6.addLayout(self.horizontalLayout_6)
-        spacerItem = QtWidgets.QSpacerItem(20, 7, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.verticalLayout_6.addItem(spacerItem)
-        # creating hide check box
-        self.hide_g1_check_btn = QtWidgets.QCheckBox(self.tab_1)
-        self.hide_g1_check_btn.setObjectName("hide_g1_check_btn")
-        self.hide_g1_check_btn.setText(_translate("MainWindow", "Hide Signal"))
-        self.verticalLayout_6.addWidget(self.hide_g1_check_btn)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 7, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.verticalLayout_6.addItem(spacerItem1)
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        # creating label for signal
-        self.label_6 = QtWidgets.QLabel(self.tab_1)
-        self.label_6.setObjectName("label_6")
-        self.label_6.setText(_translate("MainWindow", "Label"))
-        self.horizontalLayout_7.addWidget(self.label_6)
-        # creating line edit
-        self.line_edit_g1 = QtWidgets.QLineEdit(self.tab_1)
-        self.line_edit_g1.setObjectName("line_edit_g1")
-        self.horizontalLayout_7.addWidget(self.line_edit_g1)
-        # creating save button
-        self.save_lbl_g1_btn = QtWidgets.QPushButton(self.tab_1)
-        self.save_lbl_g1_btn.setObjectName("save_lbl_g1_btn")
-        self.save_lbl_g1_btn.setText(_translate("MainWindow", "Save"))
-        self.horizontalLayout_7.addWidget(self.save_lbl_g1_btn)
-        self.verticalLayout_6.addLayout(self.horizontalLayout_7)
-        return self.tab_1
 
-    def add_new_tab(self):
-        new_tab_g_1 = self.create_new_tab()
-        new_tab_g_2 = self.create_new_tab()
-        self.tab_widget_g1.addTab(new_tab_g_1, "")
-        self.tab_widget_g1.setTabText(self.tab_widget_g1.indexOf(new_tab_g_1), _translate("MainWindow", "Sig_3"))
-        self.tab_widget_g2.addTab(new_tab_g_2, "")
-        self.tab_widget_g2.setTabText(self.tab_widget_g2.indexOf(new_tab_g_2), _translate("MainWindow", "Sig_3"))
 
-        # activating methods
-        self.Handle_btn()
-
+    def add_new_signal(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)", options=options)
