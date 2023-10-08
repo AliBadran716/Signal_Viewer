@@ -35,16 +35,15 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.Handle_btn()
         self.signals_data = {}
         self.count_signals = 0;
-        self.Handle_graph()
         self.end_indx = 50
         self.start_1 = 0
         self.end = 0.154
         self.loaddata()
 
-    def Handle_graph(self ):
+    def Handle_graph(self, file_name ):
         #self.graphicsView = PlotWidget(self.widget)
         self.graphicsView.setObjectName("graphicsView")
-        df = pd.read_csv('normal_emg.csv')
+        df = pd.read_csv(file_name)
         self.x = df.iloc[:, 0].tolist()
         #self.x = list(range(100))  # 100 time points
         #self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
@@ -133,9 +132,14 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             v_values = values_column.tolist()
         # print(time_values)
         # print(v_values)
-            print(self.count_signals)
+            #print(self.count_signals)
             self.signals_data[self.count_signals] = [time_values,v_values, 'red',self.count_signals,False]
-            print(self.signals_data[self.count_signals][2])
+            #print(self.signals_data[self.count_signals][2])
+            self.comboBox.addItem(f"{'Signal'} - {self.count_signals}")
+            self.Handle_graph(file_name)
+
+
+
 
     def gen_pdf(self):
         options = QFileDialog.Options()

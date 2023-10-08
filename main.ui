@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1188</width>
-    <height>711</height>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -256,7 +256,7 @@ color: rgba(0, 0, 0, 0.50);</string>
               </property>
               <item>
                <property name="text">
-                <string>Signal_1</string>
+                <string>Graph 1 Signals</string>
                </property>
               </item>
              </widget>
@@ -374,6 +374,11 @@ color: rgba(0, 0, 0, 0.50);</string>
                 <height>0</height>
                </size>
               </property>
+              <item>
+               <property name="text">
+                <string>Graph 2 Signals</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item>
