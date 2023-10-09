@@ -44,55 +44,56 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.end = 0.154
         self.is_playing = True
         self.loaddata()
+        self.file_names = []
 
-    def Handle_graph(self, file_name ):
+    def Handle_graph(self , file_names  ):
         #self.graphicsView = PlotWidget(self.widget)
+        colors = [(255,0,0),(0,255,0),(0,0,255)]
         self.graphicsView.setObjectName("graphicsView")
-        df = pd.read_csv(file_name)
-        self.x = df.iloc[:, 0].tolist()
-        #self.x = list(range(100))  # 100 time points
-        #self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
-        self.y = df.iloc[:, 1].tolist()
-
-        self.graphicsView.setBackground('w')
+        self.data_lines = []
+        #list_df = []
         self.graphicsView.setXRange(0, 0.154)
         self.graphicsView.setYRange(-1, 1)
-        pen = pg.mkPen(color=(255, 0, 0))
-        self.data_line = self.graphicsView.plot(self.x, self.y, pen=pen)
+        self.graphicsView.setBackground('w')
+        #file_names = ['normal_ecg.csv','normal_emg.csv' , 'normal_rsp.csv']
+        for i,file_name in enumerate(file_names):
+           
+           df = pd.read_csv(file_name)
+        #list_df.append(pd.read_csv(file_name))
+           x = df.iloc[:, 0].tolist()
+        #self.x = list(range(100))  # 100 time points
+        #self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
+           y = df.iloc[:, 1].tolist()
+           pen = pg.mkPen(color=colors[i])
+           data_line = self.graphicsView.plot(x, y, pen=pen)
+           data_line.x_data = x
+           data_line.y_data = y
+           self.data_lines.append(data_line)
+           print(len(self.data_lines))
         self.timer = QtCore.QTimer()
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
 
     def update_plot_data(self  ):
-        self.end_indx+=9
-        if(self.end_indx>=400 and self.end_indx<2560):
-            self.start_1 = self.start_1 + 0.0022
-            self.end = self.end + 0.0022 
-        self.nx =[]
-        self.nx = self.x[:self.end_indx]
-        self.ny = []
-        self.ny = self.y[:self.end_indx]
-        if (self.end_indx <= 500 ):
-            self.graphicsView.setXRange(0, 0.154)
-        else:
-           if(self.end_indx > 500):
-              self.graphicsView.setXRange(self.start_1, self.end)
+        for data_line in self.data_lines:
+            self.end_indx+=4
+            if(self.end_indx>=400 and self.end_indx<2560):
+                self.start_1 = self.start_1 + 0.001
+                self.end = self.end + 0.001 
+            
+            x_data = data_line.x_data[:self.end_indx]
+            
+            y_data = data_line.y_data[:self.end_indx]
+            if (self.end_indx <= 500 ):
+                self.graphicsView.setXRange(0, 0.154)
+            else:
+             if(self.end_indx > 500):
+                self.graphicsView.setXRange(self.start_1, self.end)
 
-        if(self.end_indx == 2560):
-            self.timer.stop()
-        self.data_line.setData(self.nx, self.ny) 
-    
-        #self.x.append(self.x[-1] + 0.00025)  # Add a new value 1 higher than the last.
-        #self.y = self.y[:self.end_indx]
-        #self.y = self.y[:end_indx]  # Remove the first
-        #self.y.append( randint(0,100))  # Add a new random value.
-        #self.end_indx = self.end_indx + 500
-        #self.x = self.x[:end_indx]  # Remove the first y element.
-        #self.x = self.x[:self.end_indx]
-
-          # Update the data.
-        return self.data_line
+            if(self.end_indx == 2560):
+              self.timer.stop()
+            data_line.setData(x_data, y_data)
 
 
     def Handle_btn(self):
@@ -152,6 +153,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         if file_path:
             self.count_signals += 1
             file_name = file_path.split("/")[-1]
+            self.file_names.append(file_name)
         #print(file_name)
             signal_data = pd.read_csv(file_name)
         #print(signal_data)
@@ -166,7 +168,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.signals_data[self.count_signals] = [time_values,v_values, 'Red',f"{'Signal'} - {self.count_signals}",False]
             print(self.signals_data[self.count_signals][3])
             self.comboBox.addItem(f"{'Signal'} - {self.count_signals}")
-            self.Handle_graph(file_name)
+        self.Handle_graph(self.file_names)
     
 
     # A function that displays the data of the siganl based on which signal has been selected from the comboBox
