@@ -56,6 +56,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.speed_push_btn.setText(self.speeds[self.current_speed_index])
         self.loaddata()
         self.colors = []
+        self.hide_signals = []
         self.flag_1 = False
         self.max_y=0
         #self.flag_2 = False
@@ -84,6 +85,17 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.colors.append((0 , 250 , 0))       
                 #print('colors')
                 #print(len(self.colors))
+
+
+    #A function to determine the visibility of each signal based on the checkbox value
+    def show_hide(self, signals_data):
+        self.hide_signals= []
+        for value in signals_data.values():
+            if(value[4] == True):
+                self.hide_signals.append(True)
+            else :
+                self.hide_signals.append(False)
+
     def Handle_graph(self , signals_data ):
         #self.graphicsView = PlotWidget(self.widget)
         #colors = [(255,0,0),(0,255,0),(0,0,255)]
@@ -105,9 +117,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             
         print(f'number in files: {len(self.file_names)}')
         for i,file_name in enumerate(self.file_names):
-           print("i is " )
-           print (i)
-           print(len(self.colors))
+           #print("i is " )
+           #print (i)
+           #print(len(self.colors))
            pen = pg.mkPen(color=self.colors[i])
            #pen = pg.mkPen(color=(250 ,0,0))
            df = pd.read_csv(file_name)
@@ -121,7 +133,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
            data_line.x_data = x
            data_line.y_data = y
            self.data_lines.append(data_line)
-           print(len(self.data_lines))
+           #print(len(self.data_lines))
         self.timer = QtCore.QTimer()
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_plot_data)
@@ -150,10 +162,14 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             y_data = data_line.y_data[:self.end_indx]
             
             data_line.setData(x_data, y_data)
+            
             #print(f'flag is {self.flag_1}')
             if (self.flag_1 == True):
               self.color_detect(self.signals_data)
               data_line.setPen(self.colors[i])
+              self.show_hide(self.signals_data)
+              data_line.setVisible(not self.hide_signals[i])
+            
 
 
     def Handle_btn(self):
@@ -226,7 +242,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # print(v_values)
             #print(self.count_signals)
             self.signals_data[self.count_signals] = [time_values,v_values, 'Red',f"{'Signal'} - {self.count_signals}",False, file_name]
-            print(self.signals_data[self.count_signals][3])
+            #print(self.signals_data[self.count_signals][3])
             self.comboBox.addItem(f"{'Signal'} - {self.count_signals}")
         self.Handle_graph(self.signals_data)
     
@@ -234,13 +250,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     # A function that displays the data of the siganl based on which signal has been selected from the comboBox
     def on_combobox_selection(self):
         self.selected_item_index = self.comboBox.currentIndex()
-        print(self.selected_item_index)
+        #print(self.selected_item_index)
         self.color_g1_combo_btn.setCurrentText(self.signals_data[self.selected_item_index][2])
         
         self.line_edit_g1.setText(self.signals_data[self.selected_item_index][3])
         self.hide_g1_check_btn.setChecked(self.signals_data[self.selected_item_index][4])
 
-        print(self.signals_data[self.selected_item_index][2])
+       # print(self.signals_data[self.selected_item_index][2])
         
 
     #A function that update the data of the signal whenever the user change the data and press on save button
