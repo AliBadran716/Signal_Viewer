@@ -146,7 +146,7 @@ color: rgba(0, 0, 0, 0.50);
              </widget>
             </item>
             <item row="1" column="3">
-             <widget class="QPushButton" name="play_push_btn">
+             <widget class="QPushButton" name="play_pause_btn">
               <property name="styleSheet">
                <string notr="true"> QPushButton {background-color:white;}
 

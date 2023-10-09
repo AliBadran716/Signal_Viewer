@@ -39,6 +39,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.end_indx = 50
         self.start_1 = 0
         self.end = 0.154
+        self.is_playing = True
         self.loaddata()
 
     def Handle_graph(self, file_name ):
@@ -100,7 +101,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graph2_radio_btn.toggled.connect(self.graph2_selected)
         self.link_radio_btn.toggled.connect(self.link_selected)
         self.speed_push_btn.clicked.connect(self.speed_changed)
-        self.play_push_btn.clicked.connect(self.play_changed)
+        self.play_pause_btn.clicked.connect(self.play_pause)
         self.rewind_push_btn.clicked.connect(self.rewind_changed)
         self.zoom_slider.valueChanged.connect(self.zoom_slider_update)
         self.move_x_slider.valueChanged.connect(self.move_x_slider_update)
@@ -114,7 +115,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.save_lbl_g2_btn.clicked.connect(self.save_changes_g2)
         self.comboBox.currentIndexChanged.connect(self.on_combobox_selection)
 
-    
+    # A Function  that defines some shortcuts to make the work with our app more easier
     def shortcuts(self):
         # defining shortcuts
         self.sc_open = QShortcut(QKeySequence('Ctrl+O'), self)
@@ -133,12 +134,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.sc_g2.activated.connect(self.graph2_selected)
         self.sc_link.activated.connect(self.link_selected)
         self.sc_speed.activated.connect(self.speed_changed)
-        self.sc_play.activated.connect(self.play_changed)
+        self.sc_play.activated.connect(self.play_pause)
         self.sc_rewind.activated.connect(self.rewind_changed)
 
 
 
 
+    #A function to let the user load the signal file, create another signal element in the dictionary, and send the file to the graph
     def add_new_signal(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
@@ -163,6 +165,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.Handle_graph(file_name)
     
 
+    # A function that displays the data of the siganl based on which signal has been selected from the comboBox
     def on_combobox_selection(self):
         selected_item_index = self.comboBox.currentIndex()
         print(selected_item_index)
@@ -173,6 +176,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         print(self.signals_data[selected_item_index][2])
         
 
+    #A function that update the data of the signal whenever the user change the data and press on save button
     def save_changes_g1(self):
         selected_item_index = self.comboBox.currentIndex()
         label_text = self.line_edit_g1.text()
@@ -232,8 +236,17 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def speed_changed(self):
         print("speed change")
 
-    def play_changed(self):
-        print("play")
+    #A function that triggers between play and pause to control the flow of signals on graph
+    def play_pause(self):
+        self.is_playing = not self.is_playing
+        if self.is_playing:
+            self.timer.start()
+            #print('start')
+       
+        else:
+            self.timer.stop()
+            #print('stop')
+        
 
     def rewind_changed(self):
         print("rewind")
