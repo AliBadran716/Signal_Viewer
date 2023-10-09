@@ -14,6 +14,9 @@ from pyqtgraph import PlotWidget, plot
 from PyQt5.QtWidgets import QFileDialog, QGraphicsScene
 import numpy as np
 import pandas as pd
+from PyQt5.QtGui import QImageWriter
+from io import BytesIO
+
 
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -95,7 +98,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def Handle_btn(self):
         # menu buttons
         self.open_menu_btn.triggered.connect(self.add_new_signal)
-        self.make_pdf_btn.triggered.connect(self.gen_pdf)
+        self.make_pdf_btn.triggered.connect(self.capture_and_create_pdf)
         # graph buttons
         self.graph1_radio_btn.toggled.connect(self.graph1_selected)
         self.graph2_radio_btn.toggled.connect(self.graph2_selected)
@@ -129,8 +132,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
         # activating shortcuts
         self.sc_open.activated.connect(self.add_new_signal)
-        self.sc_export.activated.connect(self.gen_pdf)
         self.sc_g1.activated.connect(self.graph1_selected)
+        self.sc_export.activated.connect(self.capture_and_create_pdf)
+
         self.sc_g2.activated.connect(self.graph2_selected)
         self.sc_link.activated.connect(self.link_selected)
         self.sc_speed.activated.connect(self.speed_changed)
@@ -192,11 +196,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         #print(checkbox_checked)
         #print(selected_color)    
 
-
-
-
-
-    def gen_pdf(self):
+    def capture_and_create_pdf(self):
+        # Create a PDF
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
 
@@ -217,10 +218,42 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                     # Ensure the file has a .pdf extension
                     pdf_filename += ".pdf"
 
-                c = canvas.Canvas(pdf_filename, pagesize=letter)
-                c.save()
-                print(f'Empty PDF saved as {pdf_filename}')
+                # Create a PDF file
+                pdf_buffer = BytesIO()
+                pdf_canvas = canvas.Canvas(pdf_buffer, pagesize=letter)
 
+                # Save the captured image to a temporary file
+                temp_image_path = "temp_image.png"
+                plot_widget_image = QImage(self.graphicsView.size(), QImage.Format_ARGB32)
+                plot_widget_image.fill(Qt.transparent)
+                painter = QPainter(plot_widget_image)
+                self.graphicsView.render(painter)
+                painter.end()
+                plot_widget_image.save(temp_image_path)
+
+                # Add the captured image to the PDF
+                x_position = 50  # Adjust this value to set the horizontal position
+                y_position = 300  # Adjust this value to set the vertical position
+                pdf_canvas.drawImage(temp_image_path, x_position, y_position)
+
+                # Add a comment or text annotation to the PDF
+                comment_x = 100  # Adjust this value to set the horizontal position of the comment
+                comment_y = 200  # Adjust this value to set the vertical position of the comment
+                comment_text = "da signal gamdaaaaaaaaaaaaaaa neeeeeeeeeeeeeeek l dr tamer basha w ksom ."
+                pdf_canvas.drawString(comment_x, comment_y, comment_text)
+
+                # Show the page and save the PDF
+                pdf_canvas.showPage()
+                pdf_canvas.save()
+
+                # Close and save the PDF file
+                with open(pdf_filename, "wb") as f:
+                    f.write(pdf_buffer.getvalue())
+
+                # Delete the temporary image file
+                os.remove(temp_image_path)
+
+                print(f'PDF with captured image and comment saved as {pdf_filename}')
     def graph1_selected(self ):
        
             print('graph1')
