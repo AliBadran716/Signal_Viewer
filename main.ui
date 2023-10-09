@@ -41,119 +41,59 @@ color: rgba(0, 0, 0, 0.50);
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" rowspan="2">
+       <layout class="QVBoxLayout" name="verticalLayout_8">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_12">
-          <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="7">
-             <widget class="QLabel" name="label_8">
-              <property name="styleSheet">
-               <string notr="true">background-color: white;
-</string>
-              </property>
-              <property name="text">
-               <string>Move in Y</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="6">
-             <widget class="QLabel" name="label_9">
-              <property name="styleSheet">
-               <string notr="true">background-color: white;</string>
-              </property>
-              <property name="text">
-               <string>Move in X</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="5">
-             <widget class="QLabel" name="label_7">
-              <property name="styleSheet">
-               <string notr="true">background-color: white;</string>
-              </property>
-              <property name="text">
-               <string>Zoom in/out</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="5">
-             <widget class="QSlider" name="zoom_slider">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" rowspan="3">
-             <layout class="QVBoxLayout" name="verticalLayout_8">
-              <item>
-               <widget class="QRadioButton" name="graph1_radio_btn">
-                <property name="text">
-                 <string>Graph1</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="graph2_radio_btn">
-                <property name="text">
-                 <string>Graph 2</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="link_radio_btn">
-                <property name="text">
-                 <string>Link</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="4">
-             <widget class="QPushButton" name="rewind_push_btn">
-              <property name="styleSheet">
-               <string notr="true"> QPushButton {background-color:white;}
+         <widget class="QRadioButton" name="graph1_radio_btn">
+          <property name="text">
+           <string>Graph1</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="graph2_radio_btn">
+          <property name="text">
+           <string>Graph 2</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="link_radio_btn">
+          <property name="text">
+           <string>Link</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="speed_push_btn">
+        <property name="styleSheet">
+         <string notr="true">QPushButton {background-color:white;}
 
 ::hover {
     background-color: rgb(238, 238, 238); 
     
-    color: black; 
+    color:#444; 
 }</string>
-              </property>
-              <property name="text">
-               <string>Rewind</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="8" rowspan="3">
-             <widget class="QSlider" name="move_y_slider">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QPushButton" name="play_pause_btn">
-              <property name="styleSheet">
-               <string notr="true"> QPushButton {background-color:white;}
+        </property>
+        <property name="text">
+         <string>x1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="clear_push_btn">
+        <property name="styleSheet">
+         <string notr="true"> QPushButton {background-color:white;}
 
 ::hover {
     background-color: rgb(238, 238, 238); 
     
-    color: black; 
+    color:#444; 
 }
 
 
@@ -161,43 +101,376 @@ color: rgba(0, 0, 0, 0.50);
 
  
 </string>
-              </property>
-              <property name="text">
-               <string>Play/Pause</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="6">
-             <widget class="QSlider" name="move_x_slider">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QPushButton" name="speed_push_btn">
-              <property name="styleSheet">
-               <string notr="true"> QPushButton {background-color:white;}
+        </property>
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="rewind_push_btn">
+        <property name="styleSheet">
+         <string notr="true">QPushButton {background-color:white;}
 
 ::hover {
     background-color: rgb(238, 238, 238); 
     
-    color: black; 
+    color:#444; 
 }</string>
-              </property>
-              <property name="text">
-               <string>x1</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+        </property>
+        <property name="text">
+         <string>Rewind</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QLabel" name="label_9">
+        <property name="styleSheet">
+         <string notr="true">background-color: white;</string>
+        </property>
+        <property name="text">
+         <string>Move in X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QLabel" name="label_8">
+        <property name="styleSheet">
+         <string notr="true">background-color: white;
+</string>
+        </property>
+        <property name="text">
+         <string>Move in Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6" rowspan="2">
+       <widget class="QSlider" name="move_y_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="play_pause_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {background-color:white;}
+
+::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color:#444; 
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>imgs/play-and-pause-button.png</normaloff>imgs/play-and-pause-button.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="zoom_out_push_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {background-color:white;}
+
+::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color:#444; 
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>imgs/zoom-in.png</normaloff>imgs/zoom-in.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="zoom_in_push_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {background-color:white;}
+
+::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color:#444; 
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>imgs/zoom-out.png</normaloff>imgs/zoom-out.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="4">
+       <widget class="QSlider" name="move_x_slider">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1" rowspan="2">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>100</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item alignment="Qt::AlignLeft">
+         <widget class="QComboBox" name="comboBox">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>30</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>Graph 1 Signals</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QLabel" name="color_lbl">
+            <property name="text">
+             <string>Color</string>
+            </property>
+           </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout">
+           <widget class="QComboBox" name="color_g1_combo_btn">
             <item>
-             <widget class="PlotWidget" name="graphicsView">
-              <property name="styleSheet">
-               <string notr="true">color: #000;
+             <property name="text">
+              <string>-----</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Red</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Blue</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Green</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="hide_g1_check_btn">
+          <property name="text">
+           <string>Hide Signal</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Label</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="line_edit_g1"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="save_lbl_g1_btn">
+            <property name="styleSheet">
+             <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item alignment="Qt::AlignLeft">
+         <widget class="QComboBox" name="comboBox_2">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>Graph 2 Signals</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="color_lbl_2">
+            <property name="text">
+             <string>Color</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="color_g2_combo_btn">
+            <item>
+             <property name="text">
+              <string>-----</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Red</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Blue</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Green</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="hide_g2_check_btn">
+          <property name="text">
+           <string>Hide Signal</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Label</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="line_edit_g2"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="save_lbl_g2_btn">
+            <property name="styleSheet">
+             <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="PlotWidget" name="graphicsView">
+        <property name="styleSheet">
+         <string notr="true">color: #000;
 padding: 6px 12px;
 border: 1px solid rgba(0, 0, 0, 0.20);
 border-radius: 5px;
@@ -216,304 +489,84 @@ letter-spacing: 0.25px;
 /* 00. On Surface / High Emphasis */
 
 color: rgba(0, 0, 0, 0.50);</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="PlotWidget" name="graphicsView_2"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>100</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item alignment="Qt::AlignLeft">
-             <widget class="QComboBox" name="comboBox">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>30</height>
-               </size>
-              </property>
-              <item>
-               <property name="text">
-                <string>Graph 1 Signals</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QLabel" name="color_lbl">
-                <property name="text">
-                 <string>Color</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="color_g1_combo_btn">
-                <item>
-                 <property name="text">
-                  <string>-----</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Red</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Blue</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Green</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="hide_g1_check_btn">
-              <property name="text">
-               <string>Hide Signal</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <widget class="QLabel" name="label_6">
-                <property name="text">
-                 <string>Label</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="line_edit_g1"/>
-              </item>
-              <item>
-               <widget class="QPushButton" name="save_lbl_g1_btn">
-                <property name="styleSheet">
-                 <string notr="true">::hover {
-    background-color: rgb(238, 238, 238); 
-    
-    color: black; 
-}</string>
-                </property>
-                <property name="text">
-                 <string>Save</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item alignment="Qt::AlignLeft">
-             <widget class="QComboBox" name="comboBox_2">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>0</height>
-               </size>
-              </property>
-              <item>
-               <property name="text">
-                <string>Graph 2 Signals</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="color_lbl_2">
-                <property name="text">
-                 <string>Color</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="color_g2_combo_btn">
-                <item>
-                 <property name="text">
-                  <string>-----</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Red</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Blue</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Green</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="hide_g2_check_btn">
-              <property name="text">
-               <string>Hide Signal</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
-              <item>
-               <widget class="QLabel" name="label_11">
-                <property name="text">
-                 <string>Label</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="line_edit_g2"/>
-              </item>
-              <item>
-               <widget class="QPushButton" name="save_lbl_g2_btn">
-                <property name="styleSheet">
-                 <string notr="true">::hover {
-    background-color: rgb(238, 238, 238); 
-    
-    color: black; 
-}</string>
-                </property>
-                <property name="text">
-                 <string>Save</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <widget class="QTableWidget" name="tableWidget">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>171</height>
-         </size>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>175</height>
-         </size>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAsNeeded</enum>
-        </property>
-        <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::AdjustIgnored</enum>
-        </property>
-        <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderHighlightSections">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderStretchLastSection">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderCascadingSectionResizes">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="verticalHeaderHighlightSections">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderMinimumSectionSize">
-         <number>20</number>
-        </attribute>
-        <attribute name="verticalHeaderStretchLastSection">
-         <bool>false</bool>
-        </attribute>
-        <row>
-         <property name="text">
-          <string>Mean</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Dauratoin</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Std</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Max</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Min</string>
-         </property>
-        </row>
        </widget>
       </item>
+      <item>
+       <widget class="PlotWidget" name="graphicsView_2"/>
+      </item>
      </layout>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>171</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>175</height>
+       </size>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustIgnored</enum>
+      </property>
+      <attribute name="horizontalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="horizontalHeaderHighlightSections">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderCascadingSectionResizes">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderHighlightSections">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>20</number>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <row>
+       <property name="text">
+        <string>Mean</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Dauratoin</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Std</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Max</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Min</string>
+       </property>
+      </row>
+     </widget>
     </item>
    </layout>
   </widget>

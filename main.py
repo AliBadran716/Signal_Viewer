@@ -182,8 +182,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.link_radio_btn.toggled.connect(self.link_selected)
         self.speed_push_btn.clicked.connect(self.speed_changed)
         self.play_pause_btn.clicked.connect(self.play_pause)
-        self.rewind_push_btn.clicked.connect(self.rewind_changed)
-        self.zoom_slider.valueChanged.connect(self.zoom_slider_update)
+        self.zoom_out_push_btn.clicked.connect(self.zoom_out)
+        self.zoom_in_push_btn.clicked.connect(self.zoom_in)
+        self.rewind_push_btn.clicked.connect(self.rewind_graph)
+        self.clear_push_btn.clicked.connect(self.clear_graph)
         self.move_x_slider.valueChanged.connect(self.move_x_slider_update)
         self.move_y_slider.valueChanged.connect(self.move_y_slider_update)
         # signal buttons
@@ -205,18 +207,23 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.sc_link = QShortcut(QKeySequence('Ctrl+L'), self)
         self.sc_speed = QShortcut(QKeySequence('Ctrl+S'), self)
         self.sc_play = QShortcut(QKeySequence(' '), self)
+        self.sc_clear = QShortcut(QKeySequence('Ctrl+C'), self)
+        self.sc_zoom_out = QShortcut(QKeySequence('+'), self)
+        self.sc_zoom_in = QShortcut(QKeySequence('-'), self)
         self.sc_rewind = QShortcut(QKeySequence('Ctrl+R'), self)
 
         # activating shortcuts
         self.sc_open.activated.connect(self.add_new_signal)
-        self.sc_g1.activated.connect(self.graph1_selected)
         self.sc_export.activated.connect(self.capture_and_create_pdf)
-
+        self.sc_g1.activated.connect(self.graph1_selected)
         self.sc_g2.activated.connect(self.graph2_selected)
         self.sc_link.activated.connect(self.link_selected)
         self.sc_speed.activated.connect(self.speed_changed)
         self.sc_play.activated.connect(self.play_pause)
-        self.sc_rewind.activated.connect(self.rewind_changed)
+        self.sc_clear.activated.connect(self.clear_graph)
+        self.sc_zoom_in.activated.connect(self.zoom_in)
+        self.sc_zoom_out.activated.connect(self.zoom_out)
+        self.sc_rewind.activated.connect(self.rewind_graph)
 
 
 
@@ -356,26 +363,53 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         else :    
             self.current_speed_index = self.current_speed_index + 1
             self.speed_push_btn.setText(self.speeds[self.current_speed_index])
-        
 
-    #A function that triggers between play and pause to control the flow of signals on graph
+        # A function that triggers between play and pause to control the flow of signals on graph
+
     def play_pause(self):
         self.is_playing = not self.is_playing
         if self.is_playing:
             self.timer.start()
-            #print('start')
-       
+            # print('start')
+
         else:
             self.timer.stop()
-            #print('stop')
-        
+            # print('stop')
 
-    def rewind_changed(self):
+    def clear_graph(self):
+        self.graphicsView.clear()
+        self.timer.stop()
+
+    def zoom_out(self):
+        # Get the current visible x and y ranges
+        x_min, x_max = self.graphicsView.getViewBox().viewRange()[0]
+        y_min, y_max = self.graphicsView.getViewBox().viewRange()[1]
+
+        # Calculate the new visible x and y ranges (zoom in)
+        new_x_min = x_min * 0.5
+        new_x_max = x_max * 0.5
+        new_y_min = y_min * 0.5
+        new_y_max = y_max * 0.5
+
+        # Set the new visible x and y ranges
+        self.graphicsView.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
+
+    def zoom_in(self):
+        # Get the current visible x and y ranges
+        x_min, x_max = self.graphicsView.getViewBox().viewRange()[0]
+        y_min, y_max = self.graphicsView.getViewBox().viewRange()[1]
+
+        # Calculate the new visible x and y ranges (zoom out)
+        new_x_min = x_min * 1.3
+        new_x_max = x_max * 1.3
+        new_y_min = y_min * 1.3
+        new_y_max = y_max * 1.3
+
+        # Set the new visible x and y ranges
+        self.graphicsView.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
+
+    def rewind_graph(self):
         print("rewind")
-
-    def zoom_slider_update(self):
-        value = self.zoom_slider.value()
-        print(value)
 
     def move_x_slider_update(self):
         value = self.move_x_slider.value()
@@ -385,13 +419,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         value = self.move_y_slider.value()
         print(value)
 
-    def tab_widget_g1_changed(self):
-        current_tab = self.tab_widget_g1.currentIndex()
-        print(current_tab)
-
-    def tab_widget_g2_changed(self):
-        current_tab = self.tab_widget_g2.currentIndex()
-        print(current_tab)
 
     def hide_g1_btn_checked(self):
         if self.hide_g1_check_btn.isChecked() == True:
