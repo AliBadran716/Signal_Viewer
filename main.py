@@ -37,11 +37,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.setupUi(self)
         self.Handle_btn()
         self.shortcuts()
+        self.selected_item_index = 0 
         #A dict to save the data of all signals as pairs of keys and values, the key is a counter for the signals 
         # the value is a list that contains the data of each signal in the form of :
         #[[x_values], [y_values], [color_of signal], label_of_signal, is_hide, file_name]
         self.signals_data = {}
-        
+        self.graphicsView.setBackground('w')
+        self.graphicsView_2.setBackground('w')
         self.count_signals = 0;
         self.end_indx = 50
         self.start_1 = 0
@@ -53,26 +55,60 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.current_speed_index = 0
         self.speed_push_btn.setText(self.speeds[self.current_speed_index])
         self.loaddata()
+        self.colors = []
+        self.flag_1 = False
+        #self.flag_2 = False
+    
 
-    def Handle_graph(self , file_names ):
+
+
+
+
+
+    def color_detect(self , signals_data):
+        self.colors = []
+        for value in signals_data.values():
+            if(value[2] == 'Red'):
+                self.colors.append((255 , 0 , 0))
+            if (value[2] == 'Blue'):
+                self.colors.append( (0 , 0, 255)) 
+            if (value[2] == 'Green'):
+                self.colors.append((0 , 250 , 0))       
+                #print('colors')
+                #print(len(self.colors))
+    def Handle_graph(self , signals_data ):
         #self.graphicsView = PlotWidget(self.widget)
-        colors = [(255,0,0),(0,255,0),(0,0,255)]
+        #colors = [(255,0,0),(0,255,0),(0,0,255)]
+        self.color_detect(signals_data)
         self.graphicsView.setObjectName("graphicsView")
         self.data_lines = []
-        #list_df = []
+       
         self.graphicsView.setXRange(0, 0.154)
         self.graphicsView.setYRange(-1, 1)
-        self.graphicsView.setBackground('w')
-        #file_names = ['normal_ecg.csv','normal_emg.csv' , 'normal_rsp.csv']
-        for i,file_name in enumerate(file_names):
-           
+        
+        #iterate over the values of the dictionary
+        self.file_names = []
+        for value in signals_data.values():
+            self.file_names.append( value[5])
+            #print(f'file: {self.file_names}')
+        #for value in signals_data.values():
+            
+            #self.colors.append(self.color_detect(value[2]))
+            
+        print(f'number in files: {len(self.file_names)}')
+        for i,file_name in enumerate(self.file_names):
+           print("i is " )
+           print (i)
+           print(len(self.colors))
+           pen = pg.mkPen(color=self.colors[i])
+           #pen = pg.mkPen(color=(250 ,0,0))
            df = pd.read_csv(file_name)
         #list_df.append(pd.read_csv(file_name))
            x = df.iloc[:, 0].tolist()
         #self.x = list(range(100))  # 100 time points
         #self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
            y = df.iloc[:, 1].tolist()
-           pen = pg.mkPen(color=colors[i])
+           
            data_line = self.graphicsView.plot(x, y, pen=pen)
            data_line.x_data = x
            data_line.y_data = y
@@ -84,24 +120,30 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.timer.start()
 
     def update_plot_data(self  ):
-        for data_line in self.data_lines:
-            self.end_indx+=4
-            if(self.end_indx>=400 and self.end_indx<2560):
-                self.start_1 = self.start_1 + 0.001
-                self.end = self.end + 0.001 
+        self.end_indx+=4
+        if(self.end_indx>=400 and self.end_indx<2560):
+            self.start_1 = self.start_1 + 0.001
+            self.end = self.end + 0.001 
+        if (self.end_indx <= 500 ):
+                self.graphicsView.setXRange(0, 0.154)
+        else:
+            if(self.end_indx > 500):
+                self.graphicsView.setXRange(self.start_1, self.end)
+
+        if(self.end_indx == 2560):
+              self.timer.stop()
+        for i,data_line in enumerate(self.data_lines):
+            
             
             x_data = data_line.x_data[:self.end_indx]
             
             y_data = data_line.y_data[:self.end_indx]
-            if (self.end_indx <= 500 ):
-                self.graphicsView.setXRange(0, 0.154)
-            else:
-             if(self.end_indx > 500):
-                self.graphicsView.setXRange(self.start_1, self.end)
-
-            if(self.end_indx == 2560):
-              self.timer.stop()
+            
             data_line.setData(x_data, y_data)
+            #print(f'flag is {self.flag_1}')
+            if (self.flag_1 == True):
+              self.color_detect(self.signals_data)
+              data_line.setPen(self.colors[i])
 
 
     def Handle_btn(self):
@@ -176,33 +218,38 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.signals_data[self.count_signals] = [time_values,v_values, 'Red',f"{'Signal'} - {self.count_signals}",False, file_name]
             print(self.signals_data[self.count_signals][3])
             self.comboBox.addItem(f"{'Signal'} - {self.count_signals}")
-        self.Handle_graph(self.file_names)
+        self.Handle_graph(self.signals_data)
     
 
     # A function that displays the data of the siganl based on which signal has been selected from the comboBox
     def on_combobox_selection(self):
-        selected_item_index = self.comboBox.currentIndex()
-        print(selected_item_index)
-        self.color_g1_combo_btn.setCurrentText(self.signals_data[selected_item_index][2])
-        self.line_edit_g1.setText(self.signals_data[selected_item_index][3])
-        self.hide_g1_check_btn.setChecked(self.signals_data[selected_item_index][4])
+        self.selected_item_index = self.comboBox.currentIndex()
+        print(self.selected_item_index)
+        self.color_g1_combo_btn.setCurrentText(self.signals_data[self.selected_item_index][2])
+        
+        self.line_edit_g1.setText(self.signals_data[self.selected_item_index][3])
+        self.hide_g1_check_btn.setChecked(self.signals_data[self.selected_item_index][4])
 
-        print(self.signals_data[selected_item_index][2])
+        print(self.signals_data[self.selected_item_index][2])
         
 
     #A function that update the data of the signal whenever the user change the data and press on save button
     def save_changes_g1(self):
-        selected_item_index = self.comboBox.currentIndex()
+        #selected_item_index = self.comboBox.currentIndex()
         label_text = self.line_edit_g1.text()
         # Get the selected color from the ComboBox
         selected_color = self.color_g1_combo_btn.currentText()
         checkbox_checked = self.hide_g1_check_btn.isChecked()
-        self.signals_data[selected_item_index][2] = selected_color
-        self.signals_data[selected_item_index][3] = label_text
-        self.signals_data[selected_item_index][4] = checkbox_checked
-        #print(self.signals_data[selected_item_index][2])
-        #print(self.signals_data[selected_item_index][3])
-        #print(self.signals_data[selected_item_index][4])
+        self.signals_data[self.selected_item_index][2] = selected_color
+        
+        self.signals_data[self.selected_item_index][3] = label_text
+        self.signals_data[self.selected_item_index][4] = checkbox_checked
+        self.flag_1 = True
+        #self.flag_2 = True
+        #print(f'flag2 {self.flag_2}')
+        #print(self.signals_data[self.selected_item_index][2])
+        #print(self.signals_data[self.selected_item_index][3])
+        #print(self.signals_data[self.selected_item_index][4])
         #print(checkbox_checked)
         #print(selected_color)    
 
