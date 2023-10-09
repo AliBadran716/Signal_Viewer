@@ -57,12 +57,20 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.loaddata()
         self.colors = []
         self.flag_1 = False
+        self.max_y=0
         #self.flag_2 = False
     
 
 
 
 
+    def max_range (self):
+        for value in self.signals_data.values():
+            #print(value[1])
+            for search in value[1]:
+               if(search > self.max_y):
+                  self.max_y = search
+                
 
 
     def color_detect(self , signals_data):
@@ -82,9 +90,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.color_detect(signals_data)
         self.graphicsView.setObjectName("graphicsView")
         self.data_lines = []
-       
+        
         self.graphicsView.setXRange(0, 0.154)
-        self.graphicsView.setYRange(-1, 1)
+        
         
         #iterate over the values of the dictionary
         self.file_names = []
@@ -118,8 +126,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
-
+        self.max_range()
+        self.graphicsView.setYRange(-self.max_y, self.max_y)
     def update_plot_data(self  ):
+        
         self.end_indx+=4
         if(self.end_indx>=400 and self.end_indx<2560):
             self.start_1 = self.start_1 + 0.001
