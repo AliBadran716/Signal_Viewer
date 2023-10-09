@@ -37,7 +37,11 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.setupUi(self)
         self.Handle_btn()
         self.shortcuts()
+        #A dict to save the data of all signals as pairs of keys and values, the key is a counter for the signals 
+        # the value is a list that contains the data of each signal in the form of :
+        #[[x_values], [y_values], [color_of signal], label_of_signal, is_hide, file_name]
         self.signals_data = {}
+        
         self.count_signals = 0;
         self.end_indx = 50
         self.start_1 = 0
@@ -45,8 +49,12 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.is_playing = True
         self.loaddata()
         self.file_names = []
+        self.speeds = ["x1", "x1.25", "x1.5", "x2"]
+        self.current_speed_index = 0
+        self.speed_push_btn.setText(self.speeds[self.current_speed_index])
+        self.loaddata()
 
-    def Handle_graph(self , file_names  ):
+    def Handle_graph(self , file_names ):
         #self.graphicsView = PlotWidget(self.widget)
         colors = [(255,0,0),(0,255,0),(0,0,255)]
         self.graphicsView.setObjectName("graphicsView")
@@ -165,7 +173,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # print(time_values)
         # print(v_values)
             #print(self.count_signals)
-            self.signals_data[self.count_signals] = [time_values,v_values, 'Red',f"{'Signal'} - {self.count_signals}",False]
+            self.signals_data[self.count_signals] = [time_values,v_values, 'Red',f"{'Signal'} - {self.count_signals}",False, file_name]
             print(self.signals_data[self.count_signals][3])
             self.comboBox.addItem(f"{'Signal'} - {self.count_signals}")
         self.Handle_graph(self.file_names)
@@ -241,7 +249,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 # Add a comment or text annotation to the PDF
                 comment_x = 100  # Adjust this value to set the horizontal position of the comment
                 comment_y = 200  # Adjust this value to set the vertical position of the comment
-                comment_text = "da signal gamdaaaaaaaaaaaaaaa neeeeeeeeeeeeeeek l dr tamer basha w ksom ."
+                comment_text = "----------------"
                 pdf_canvas.drawString(comment_x, comment_y, comment_text)
 
                 # Show the page and save the PDF
@@ -269,7 +277,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             print('link')
 
     def speed_changed(self):
-        print("speed change")
+        if (self.current_speed_index == 3):
+            self.speed_push_btn.setText(self.speeds[0])
+            self.current_speed_index = 0
+        else :    
+            self.current_speed_index = self.current_speed_index + 1
+            self.speed_push_btn.setText(self.speeds[self.current_speed_index])
+        
 
     #A function that triggers between play and pause to control the flow of signals on graph
     def play_pause(self):
