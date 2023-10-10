@@ -68,6 +68,11 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.max_y=0
         self.graph_1_active = False
         self.graph_2_active = False
+        self.max_x = 0
+        self.number_of_points = 0
+        self.start_flag = False
+        self.flag_of_speed = False
+        self.start_new = []    
         #self.flag_2 = False
     
 
@@ -176,18 +181,19 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.max_range_1()
         self.graphicsView_1.setYRange(-self.max_y, self.max_y)
     def update_plot_data_1(self  ):
-        
-        self.end_indx_1+=4
-        if(self.end_indx_1>=400 and self.end_indx_1<2560):
-            self.start_1 = self.start_1 + 0.001
-            self.end_1 = self.end_1 + 0.001
+        speed_of_signal = 9 / self.number_of_points
+        step_in_x = speed_of_signal * self.max_x
+        self.end_indx_1+=9
+        if(self.end_indx_1>=400 and self.end_indx_1<self.number_of_points):
+            self.start_1 = self.start_1 + step_in_x
+            self.end_1 = self.end_1 + step_in_x
         if (self.end_indx_1 <= 500 ):
                 self.graphicsView_1.setXRange(0, 0.154)
         else:
             if(self.end_indx_1 > 500):
                 self.graphicsView_1.setXRange(self.start_1, self.end_1)
 
-        if(self.end_indx_1 == 2560):
+        if(self.end_indx_1 == self.number_of_points):
               self.timer_1.stop()
         for i,data_line in enumerate(self.data_lines_1):
             
@@ -210,6 +216,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def Handle_graph_2(self, signals_data_2):
         # self.graphicsView_2 = PlotWidget(self.widget)
         # colors = [(255,0,0),(0,255,0),(0,0,255)]
+        
         self.color_detect_2(signals_data_2)
         self.graphicsView_2.setObjectName("graphicsView_2")
         self.data_lines_2 = []
@@ -252,18 +259,19 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graphicsView_2.setYRange(-self.max_y, self.max_y)
 
     def update_plot_data_2(self):
-
-        self.end_indx_2 += 4
-        if (self.end_indx_2 >= 400 and self.end_indx_2 < 2560):
-            self.start_2 = self.start_2 + 0.001
-            self.end_2 = self.end_2 + 0.001
+        speed_of_signal = 9 / self.number_of_points
+        step_in_x = speed_of_signal * self.max_x
+        self.end_indx_2 += 9
+        if (self.end_indx_2 >= 400 and self.end_indx_2 < self.number_of_points):
+            self.start_2 = self.start_2 + step_in_x
+            self.end_2 = self.end_2 + step_in_x
         if (self.end_indx_2 <= 500):
             self.graphicsView_2.setXRange(0, 0.154)
         else:
             if (self.end_indx_2 > 500):
                 self.graphicsView_2.setXRange(self.start_2, self.end_2)
 
-        if (self.end_indx_2 == 2560):
+        if (self.end_indx_2 == self.number_of_points):
             self.timer_2.stop()
         for i, data_line in enumerate(self.data_lines_2):
 
@@ -357,6 +365,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             # Convert the extracted columns to lists
             time_values = time_column.tolist()
             v_values = values_column.tolist()
+            if(self.flag_of_speed == False):
+                self.max_x = max(time_values)
+                self.number_of_points = len(time_values)
+                self.flag_of_speed = True
             # print(time_values)
             # print(v_values)
             # print(self.count_signals_!)
@@ -364,6 +376,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                                                      False, file_name]
             # print(self.signals_data_1[self.count_signals_1][3])
             self.g_1_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_1}")
+            self.start_flag = False
         self.Handle_graph_1(self.signals_data_1)
 
     def add_signal_to_graph_2(self):
@@ -383,6 +396,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 # Convert the extracted columns to lists
                 time_values = time_column.tolist()
                 v_values = values_column.tolist()
+                if(self.flag_of_speed == False):
+                    self.max_x = max(time_values)
+                    self.number_of_points = len(time_values)
+                    self.flag_of_speed = True
                 # print(time_values)
                 # print(v_values)
                 # print(self.count_signals_!)
@@ -391,6 +408,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                                                              False, file_name]
                 # print(self.signals_data_1[self.count_signals_1][3])
                 self.g_2_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_2}")
+                self.start_flag = False
             self.Handle_graph_2(self.signals_data_2)
 
 
