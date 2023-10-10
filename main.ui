@@ -272,7 +272,7 @@ color: rgba(0, 0, 0, 0.50);
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item alignment="Qt::AlignLeft">
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="g_1_signals_combo_box">
           <property name="minimumSize">
            <size>
             <width>150</width>
@@ -377,7 +377,7 @@ color: rgba(0, 0, 0, 0.50);
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item alignment="Qt::AlignLeft">
-         <widget class="QComboBox" name="comboBox_2">
+         <widget class="QComboBox" name="g_2_signals_combo_box">
           <property name="minimumSize">
            <size>
             <width>150</width>
@@ -468,7 +468,7 @@ color: rgba(0, 0, 0, 0.50);
     <item row="1" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="PlotWidget" name="graphicsView">
+       <widget class="PlotWidget" name="graphicsView_1">
         <property name="styleSheet">
          <string notr="true">color: #000;
 padding: 6px 12px;
@@ -583,7 +583,6 @@ color: rgba(0, 0, 0, 0.50);</string>
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="open_menu_btn"/>
     <addaction name="add_to_graph_1_btn"/>
     <addaction name="add_to_graph_2_btn"/>
    </widget>
