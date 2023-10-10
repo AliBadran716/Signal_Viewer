@@ -584,6 +584,8 @@ color: rgba(0, 0, 0, 0.50);</string>
      <string>File</string>
     </property>
     <addaction name="open_menu_btn"/>
+    <addaction name="add_to_graph_1_btn"/>
+    <addaction name="add_to_graph_2_btn"/>
    </widget>
    <widget class="QMenu" name="menuExport">
     <property name="title">
@@ -608,6 +610,16 @@ color: rgba(0, 0, 0, 0.50);</string>
   <action name="make_pdf_btn">
    <property name="text">
     <string>pdf</string>
+   </property>
+  </action>
+  <action name="add_to_graph_1_btn">
+   <property name="text">
+    <string>Add to Graph 1</string>
+   </property>
+  </action>
+  <action name="add_to_graph_2_btn">
+   <property name="text">
+    <string>Add to Graph 2</string>
    </property>
   </action>
  </widget>

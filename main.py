@@ -41,10 +41,12 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         #A dict to save the data of all signals as pairs of keys and values, the key is a counter for the signals 
         # the value is a list that contains the data of each signal in the form of :
         #[[x_values], [y_values], [color_of signal], label_of_signal, is_hide, file_name]
-        self.signals_data = {}
+        self.signals_data_1 = {}
+        self.signals_data_2 = {}
         self.graphicsView.setBackground('w')
         self.graphicsView_2.setBackground('w')
-        self.count_signals = 0;
+        self.count_signals_1 = 0;
+        self.count_signals_2 = 0;
         self.end_indx = 50
         self.start_1 = 0
         self.end = 0.154
@@ -59,6 +61,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.hide_signals = []
         self.flag_1 = False
         self.max_y=0
+        self.graph_1_active = False
+        self.graph_2_active = False
         #self.flag_2 = False
     
 
@@ -66,7 +70,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
 
     def max_range (self):
-        for value in self.signals_data.values():
+        for value in self.signals_data_1.values():
             #print(value[1])
             for search in value[1]:
                if(search > self.max_y):
@@ -74,9 +78,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 
 
 
-    def color_detect(self , signals_data):
+    def color_detect(self , signals_data_1):
         self.colors = []
-        for value in signals_data.values():
+        for value in signals_data_1.values():
             if(value[2] == 'Red'):
                 self.colors.append((255 , 0 , 0))
             if (value[2] == 'Blue'):
@@ -88,18 +92,18 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
 
     #A function to determine the visibility of each signal based on the checkbox value
-    def show_hide(self, signals_data):
+    def show_hide(self, signals_data_1):
         self.hide_signals= []
-        for value in signals_data.values():
+        for value in signals_data_1.values():
             if(value[4] == True):
                 self.hide_signals.append(True)
             else :
                 self.hide_signals.append(False)
 
-    def Handle_graph(self , signals_data ):
+    def Handle_graph(self , signals_data_1 ):
         #self.graphicsView = PlotWidget(self.widget)
         #colors = [(255,0,0),(0,255,0),(0,0,255)]
-        self.color_detect(signals_data)
+        self.color_detect(signals_data_1)
         self.graphicsView.setObjectName("graphicsView")
         self.data_lines = []
         
@@ -108,10 +112,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         
         #iterate over the values of the dictionary
         self.file_names = []
-        for value in signals_data.values():
+        for value in signals_data_1.values():
             self.file_names.append( value[5])
             #print(f'file: {self.file_names}')
-        #for value in signals_data.values():
+        #for value in signals_data_1.values():
             
             #self.colors.append(self.color_detect(value[2]))
             
@@ -165,9 +169,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             
             #print(f'flag is {self.flag_1}')
             if (self.flag_1 == True):
-              self.color_detect(self.signals_data)
+              self.color_detect(self.signals_data_1)
               data_line.setPen(self.colors[i])
-              self.show_hide(self.signals_data)
+              self.show_hide(self.signals_data_1)
               data_line.setVisible(not self.hide_signals[i])
             
 
@@ -175,6 +179,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def Handle_btn(self):
         # menu buttons
         self.open_menu_btn.triggered.connect(self.add_new_signal)
+        self.add_to_graph_1_btn.triggered.connect(self.add_signal_to_graph_1)
+       # self.add_to_graph_2_btn.triggered.connect(self.add_signal_to_graph_2)
         self.make_pdf_btn.triggered.connect(self.capture_and_create_pdf)
         # graph buttons
         self.graph1_radio_btn.toggled.connect(self.graph1_selected)
@@ -248,22 +254,49 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # print(time_values)
         # print(v_values)
             #print(self.count_signals)
-            self.signals_data[self.count_signals] = [time_values,v_values, 'Red',f"{'Signal'} - {self.count_signals}",False, file_name]
-            #print(self.signals_data[self.count_signals][3])
+            self.signals_data_1[self.count_signals] = [time_values,v_values, 'Red',f"{'Signal'} - {self.count_signals}",False, file_name]
+            #print(self.signals_data_1[self.count_signals][3])
             self.comboBox.addItem(f"{'Signal'} - {self.count_signals}")
-        self.Handle_graph(self.signals_data)
+        self.Handle_graph(self.signals_data_1)
     
+    def add_signal_to_graph_1(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)",
+                                                   options=options)
+        if file_path:
+            self.count_signals_1 += 1
+            file_name = file_path.split("/")[-1]
+            self.file_names.append(file_name)
+            # print(file_name)
+            signal_data = pd.read_csv(file_name)
+            # print(signal_data)
+            time_column = signal_data.iloc[:, 0]
+            values_column = signal_data.iloc[:, 1]
+            # Convert the extracted columns to lists
+            time_values = time_column.tolist()
+            v_values = values_column.tolist()
+            # print(time_values)
+            # print(v_values)
+            # print(self.count_signals_!)
+            self.signals_data_1[self.count_signals_1] = [time_values, v_values, 'Red', f"{'Signal'} - {self.count_signals_1}",
+                                                     False, file_name]
+            # print(self.signals_data_1[self.count_signals_1][3])
+            self.comboBox.addItem(f"{'Signal'} - {self.count_signals_1}")
+        self.Handle_graph(self.signals_data_1)
+
+
 
     # A function that displays the data of the siganl based on which signal has been selected from the comboBox
     def on_combobox_selection(self):
         self.selected_item_index = self.comboBox.currentIndex()
         #print(self.selected_item_index)
-        self.color_g1_combo_btn.setCurrentText(self.signals_data[self.selected_item_index][2])
+        self.color_g1_combo_btn.setCurrentText(self.signals_data_1[self.selected_item_index][2])
         
-        self.line_edit_g1.setText(self.signals_data[self.selected_item_index][3])
-        self.hide_g1_check_btn.setChecked(self.signals_data[self.selected_item_index][4])
+        self.line_edit_g1.setText(self.signals_data_1[self.selected_item_index][3])
+        self.hide_g1_check_btn.setChecked(self.signals_data_1[self.selected_item_index][4])
 
-       # print(self.signals_data[self.selected_item_index][2])
+       # print(self.signals_data_1[self.selected_item_index][2])
         
 
     #A function that update the data of the signal whenever the user change the data and press on save button
@@ -273,16 +306,16 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # Get the selected color from the ComboBox
         selected_color = self.color_g1_combo_btn.currentText()
         checkbox_checked = self.hide_g1_check_btn.isChecked()
-        self.signals_data[self.selected_item_index][2] = selected_color
+        self.signals_data_1[self.selected_item_index][2] = selected_color
         
-        self.signals_data[self.selected_item_index][3] = label_text
-        self.signals_data[self.selected_item_index][4] = checkbox_checked
+        self.signals_data_1[self.selected_item_index][3] = label_text
+        self.signals_data_1[self.selected_item_index][4] = checkbox_checked
         self.flag_1 = True
         #self.flag_2 = True
         #print(f'flag2 {self.flag_2}')
-        #print(self.signals_data[self.selected_item_index][2])
-        #print(self.signals_data[self.selected_item_index][3])
-        #print(self.signals_data[self.selected_item_index][4])
+        #print(self.signals_data_1[self.selected_item_index][2])
+        #print(self.signals_data_1[self.selected_item_index][3])
+        #print(self.signals_data_1[self.selected_item_index][4])
         #print(checkbox_checked)
         #print(selected_color)    
 
@@ -345,17 +378,19 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
                 print(f'PDF with captured image and comment saved as {pdf_filename}')
     def graph1_selected(self ):
-       
-            print('graph1')
+
+        self.graph_1_active = True
+        self.graph_2_active = False
 
     def graph2_selected(self):
- 
-            print('graph2')
+
+        self.graph_1_active = False
+        self.graph_2_active = True
 
     def link_selected(self):
-   
-            print('link')
 
+        self.graph_1_active = True
+        self.graph_2_active = True
     def speed_changed(self):
         if (self.current_speed_index == 3):
             self.speed_push_btn.setText(self.speeds[0])
@@ -377,8 +412,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             # print('stop')
 
     def clear_graph(self):
-        self.graphicsView.clear()
-        self.timer.stop()
+        self.timer.stop()  # Stop the timer
+        self.graphicsView.clear()  # Clear the graph
+
+        # Reset start_1, end, and end_indx
+        self.end_indx = 50
+        self.start_1 = 0
+        self.end = 0.154
 
     def zoom_out(self):
         # Get the current visible x and y ranges
@@ -409,7 +449,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graphicsView.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
 
     def rewind_graph(self):
-        print("rewind")
+        # Clear Graph
+        self.clear_graph()
+
+        # Replot all the signals
+        self.Handle_graph(self.signals_data_1)
+
+
 
     def move_x_slider_update(self):
         value = self.move_x_slider.value()
