@@ -84,6 +84,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.signals_data_2 = {}
         self.graphicsView_1.setBackground('w')
         self.graphicsView_2.setBackground('w')
+        self.graphicsView_1.setLabel('bottom', 'time')
+        self.graphicsView_2.setLabel('bottom', 'time')
         self.count_signals_1 = 0;
         self.count_signals_2 = 0;
         self.end_indx_1 = 50
@@ -105,7 +107,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.flag_1 = False
         self.flag_2 = False
         self.max_y=0
-        self.graph_1_active = False
+        self.graph_1_active = True
         self.graph_2_active = False
         self.max_x = 0
         self.number_of_points = 0
@@ -249,7 +251,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
               self.color_detect_1(self.signals_data_1)
               data_line.setPen(self.colors[i])
               self.show_hide_1(self.signals_data_1)
-              data_line.setVisible(not self.hide_signals[i])
+              data_line.setVisible(self.hide_signals[i])
 
     # graph 2
     def Handle_graph_2(self, signals_data_2):
@@ -325,7 +327,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.color_detect_2(self.signals_data_2)
                 data_line.setPen(self.colors[i])
                 self.show_hide_2(self.signals_data_2)
-                data_line.setVisible(not self.hide_signals[i])
+                data_line.setVisible(self.hide_signals[i])
 
     def Handle_btn(self):
         # menu buttons
@@ -344,6 +346,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.clear_push_btn.clicked.connect(self.clear_graph)
         self.snap_shot_btn.clicked.connect(self.save_snap_shot)
         # signal buttons
+        self.show_g1_check_btn.stateChanged.connect(self.show_hide_signal_g_1)
+        self.show_g2_check_btn.stateChanged.connect(self.show_hide_signal_g_2)
         self.save_lbl_g1_btn.clicked.connect(self.save_changes_g1)
         self.save_lbl_g2_btn.clicked.connect(self.save_changes_g2)
         self.g_1_signals_combo_box.currentIndexChanged.connect(self.on_combobox_g_1_selection)
@@ -352,6 +356,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     # A Function  that defines some shortcuts to make the work with our app more easier
     def shortcuts(self):
         # defining shortcuts
+        self.sc_add_to_g_1 = QShortcut(QKeySequence('Ctrl+SHIFT+1'), self)
+        self.sc_add_to_g_2 = QShortcut(QKeySequence('Ctrl+SHIFT+2'), self)
         self.sc_export = QShortcut(QKeySequence('Ctrl+E'), self)
         self.sc_g1 = QShortcut(QKeySequence('Ctrl+1'), self)
         self.sc_g2 = QShortcut(QKeySequence('Ctrl+2'), self)
@@ -365,6 +371,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
         # activating shortcuts
 
+        self.sc_add_to_g_1.activated.connect(self.add_signal_to_graph_1)
+        self.sc_add_to_g_2.activated.connect(self.add_signal_to_graph_2)
         self.sc_export.activated.connect(self.capture_and_create_pdf)
         self.sc_g1.activated.connect(self.graph1_selected)
         self.sc_g2.activated.connect(self.graph2_selected)
@@ -402,13 +410,16 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             # print(v_values)
             # print(self.count_signals_!)
             self.signals_data_1[self.count_signals_1] = [time_values, v_values, 'Red', f"{'Signal'} - {self.count_signals_1}",
-                                                     False, file_name]
+                                                     True, file_name]
             # print(self.signals_data_1[self.count_signals_1][3])
             self.g_1_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_1}")
             self.start_flag = False
         self.Handle_graph_1(self.signals_data_1)
         # Update the table with the latest data
         self.loaddata()
+        self.graph_1_active = True
+        self.rewind_graph()
+        self.graph_1_active = False
 
     def add_signal_to_graph_2(self):
             options = QFileDialog.Options()
@@ -436,12 +447,15 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 # print(self.count_signals_!)
                 self.signals_data_2[self.count_signals_2] = [time_values, v_values, 'Red',
                                                              f"{'Signal'} - {self.count_signals_2}",
-                                                             False, file_name]
+                                                             True, file_name]
                 self.g_2_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_2}")
                 self.start_flag = False
             self.Handle_graph_2(self.signals_data_2)
             # Update the table with the latest data
             self.loaddata()
+            self.graph_2_active = True
+            self.rewind_graph()
+            self.graph_2_active = False
 
     # A function that displays the data of the signal based on which signal has been selected from the comboBox
     def on_combobox_g_1_selection(self):
@@ -450,7 +464,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.color_g1_combo_btn.setCurrentText(self.signals_data_1[self.selected_item_index][2])
         
         self.line_edit_g1.setText(self.signals_data_1[self.selected_item_index][3])
-        self.hide_g1_check_btn.setChecked(self.signals_data_1[self.selected_item_index][4])
+        self.show_g1_check_btn.setChecked(self.signals_data_1[self.selected_item_index][4])
 
     def on_combobox_g_2_selection(self):
         self.selected_item_index = self.g_2_signals_combo_box.currentIndex()
@@ -458,32 +472,35 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.color_g2_combo_btn.setCurrentText(self.signals_data_2[self.selected_item_index][2])
 
         self.line_edit_g2.setText(self.signals_data_2[self.selected_item_index][3])
-        self.hide_g2_check_btn.setChecked(self.signals_data_2[self.selected_item_index][4])
+        self.show_g2_check_btn.setChecked(self.signals_data_2[self.selected_item_index][4])
+
+    def show_hide_signal_g_1(self):
+        checkbox_checked = self.show_g1_check_btn.isChecked()
+        self.signals_data_1[self.selected_item_index][4] = checkbox_checked
+        self.flag_1 = True
+
+    def show_hide_signal_g_2(self):
+        checkbox_checked = self.show_g2_check_btn.isChecked()
+        self.signals_data_[self.selected_item_index][4] = checkbox_checked
+        self.flag_2 = True
+
 
     #A function that update the data of the signal whenever the user change the data and press on save button
     def save_changes_g1(self):
-
         label_text = self.line_edit_g1.text()
         # Get the selected color from the ComboBox
         selected_color = self.color_g1_combo_btn.currentText()
-        checkbox_checked = self.hide_g1_check_btn.isChecked()
         self.signals_data_1[self.selected_item_index][2] = selected_color
-        
         self.signals_data_1[self.selected_item_index][3] = label_text
-        self.signals_data_1[self.selected_item_index][4] = checkbox_checked
         self.flag_1 = True
 
 
     def save_changes_g2(self):
-
         label_text = self.line_edit_g2.text()
         # Get the selected color from the ComboBox
         selected_color = self.color_g2_combo_btn.currentText()
-        checkbox_checked = self.hide_g2_check_btn.isChecked()
         self.signals_data_2[self.selected_item_index][2] = selected_color
-
         self.signals_data_2[self.selected_item_index][3] = label_text
-        self.signals_data_2[self.selected_item_index][4] = checkbox_checked
         self.flag_2 = True
 
 
@@ -798,12 +815,12 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         elif (self.graph_1_active == True and self.graph_2_active==True):
            # graph 1
             self.is_playing_g_1 = not self.is_playing_g_1
+            self.is_playing_g_2 = self.is_playing_g_1
             if self.is_playing_g_1:
                 self.timer_1.start()
             else:
                 self.timer_1.stop()
             # graph 2
-            self.is_playing_g_2 = not self.is_playing_g_2
             if self.is_playing_g_2:
                 self.timer_2.start()
             else:

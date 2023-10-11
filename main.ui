@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1188</width>
+    <width>1176</width>
     <height>688</height>
    </rect>
   </property>
@@ -50,6 +50,9 @@ color: rgba(0, 0, 0, 0.50);
          <widget class="QRadioButton" name="graph1_radio_btn">
           <property name="text">
            <string>Graph1</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -267,24 +270,114 @@ color: rgba(0, 0, 0, 0.50);
       </item>
      </layout>
     </item>
-    <item row="0" column="1" rowspan="2">
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item row="0" column="1" colspan="2">
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>171</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>175</height>
+       </size>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+      </property>
+      <attribute name="horizontalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="horizontalHeaderHighlightSections">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderCascadingSectionResizes">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderHighlightSections">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>20</number>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <row>
+       <property name="text">
+        <string>Mean</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Dauratoin</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Std</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Max</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Min</string>
+       </property>
+      </row>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+       <widget class="PlotWidget" name="graphicsView_1">
+        <property name="styleSheet">
+         <string notr="true">color: #000;
+padding: 6px 12px;
+border: 1px solid rgba(0, 0, 0, 0.20);
+border-radius: 5px;
+
+/* Body 2 */
+
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 20px;
+/* identical to box height, or 143% */
+
+letter-spacing: 0.25px;
+
+/* 00. On Surface / High Emphasis */
+
+color: rgba(0, 0, 0, 0.50);</string>
         </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>100</height>
-         </size>
-        </property>
-       </spacer>
+       </widget>
       </item>
+      <item>
+       <widget class="PlotWidget" name="graphicsView_2"/>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="2">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item alignment="Qt::AlignLeft">
@@ -338,9 +431,12 @@ color: rgba(0, 0, 0, 0.50);
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="hide_g1_check_btn">
+         <widget class="QCheckBox" name="show_g1_check_btn">
           <property name="text">
-           <string>Hide Signal</string>
+           <string>Show Signal</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -443,9 +539,12 @@ color: rgba(0, 0, 0, 0.50);
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="hide_g2_check_btn">
+         <widget class="QCheckBox" name="show_g2_check_btn">
           <property name="text">
-           <string>Hide Signal</string>
+           <string>Show Signal</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -481,109 +580,6 @@ color: rgba(0, 0, 0, 0.50);
       </item>
      </layout>
     </item>
-    <item row="1" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="PlotWidget" name="graphicsView_1">
-        <property name="styleSheet">
-         <string notr="true">color: #000;
-padding: 6px 12px;
-border: 1px solid rgba(0, 0, 0, 0.20);
-border-radius: 5px;
-
-/* Body 2 */
-
-font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 20px;
-/* identical to box height, or 143% */
-
-letter-spacing: 0.25px;
-
-/* 00. On Surface / High Emphasis */
-
-color: rgba(0, 0, 0, 0.50);</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="PlotWidget" name="graphicsView_2"/>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QTableWidget" name="tableWidget">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>171</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>175</height>
-       </size>
-      </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
-      <property name="sizeAdjustPolicy">
-       <enum>QAbstractScrollArea::AdjustIgnored</enum>
-      </property>
-      <attribute name="horizontalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="horizontalHeaderHighlightSections">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="horizontalHeaderStretchLastSection">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderCascadingSectionResizes">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="verticalHeaderHighlightSections">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderMinimumSectionSize">
-       <number>20</number>
-      </attribute>
-      <attribute name="verticalHeaderStretchLastSection">
-       <bool>false</bool>
-      </attribute>
-      <row>
-       <property name="text">
-        <string>Mean</string>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string>Dauratoin</string>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string>Std</string>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string>Max</string>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string>Min</string>
-       </property>
-      </row>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -591,7 +587,7 @@ color: rgba(0, 0, 0, 0.50);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1188</width>
+     <width>1176</width>
      <height>34</height>
     </rect>
    </property>
