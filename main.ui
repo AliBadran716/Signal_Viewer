@@ -249,6 +249,22 @@ color: rgba(0, 0, 0, 0.50);
         </property>
        </widget>
       </item>
+      <item row="1" column="5">
+       <widget class="QPushButton" name="snap_shot_btn">
+        <property name="styleSheet">
+         <string notr="true">QPushButton {background-color:white;}
+
+::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color:#444; 
+}</string>
+        </property>
+        <property name="text">
+         <string>Snap Shot</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item row="0" column="1" rowspan="2">

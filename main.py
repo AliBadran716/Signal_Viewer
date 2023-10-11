@@ -9,6 +9,7 @@ import pyqtgraph as pg
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 _translate = QtCore.QCoreApplication.translate
+from PyQt5.QtGui import QPixmap
 
 from pyqtgraph import PlotWidget, plot
 from PyQt5.QtWidgets import QFileDialog, QGraphicsScene
@@ -27,6 +28,44 @@ import sys
 
 FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main.ui"))  # connects the Ui file with the Python file
 
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors  # Add this import
+from reportlab.lib.styles import getSampleStyleSheet
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PyQt5.uic import loadUiType
+from PyQt5.QtCore import QCoreApplication
+from pyqtgraph import PlotWidget
+
+from reportlab.lib.pagesizes import inch
+# Other imports...
+from reportlab.lib.pagesizes import letter, inch
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Spacer
+
+import sys
+import os
+from io import BytesIO
+import numpy as np
+import pandas as pd
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Image, Table, TableStyle, PageBreak, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+
+
+
+from io import BytesIO
+
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+import os
+from os import path
 
 class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_class file
 
@@ -74,9 +113,11 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.flag_of_speed = False
         self.start_new = []    
         #self.flag_2 = False
+        self.pdf_content = []
+        self.snapshot_path=''
+        self.snapshot_counter = 0
+        self.title_pdf()
     
-
-
 
 
     def max_range_1 (self):
@@ -92,7 +133,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             for search in value[1]:
                if(search > self.max_y):
                   self.max_y = search
-
 
     def color_detect_1(self , signals_data_1):
         self.colors = []
@@ -117,7 +157,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.colors.append((0, 250, 0))
                 # print('colors')
                 # print(len(self.colors))
-
 
     #A function to determine the visibility of each signal based on the checkbox value
     def show_hide_1(self, signals_data_1):
@@ -180,6 +219,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.timer_1.start()
         self.max_range_1()
         self.graphicsView_1.setYRange(-self.max_y, self.max_y)
+
     def update_plot_data_1(self  ):
         speed_of_signal = 9 / self.number_of_points
         step_in_x = speed_of_signal * self.max_x
@@ -210,7 +250,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
               data_line.setPen(self.colors[i])
               self.show_hide_1(self.signals_data_1)
               data_line.setVisible(not self.hide_signals[i])
-            
 
     # graph 2
     def Handle_graph_2(self, signals_data_2):
@@ -303,13 +342,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.zoom_in_push_btn.clicked.connect(self.zoom_in)
         self.rewind_push_btn.clicked.connect(self.rewind_graph)
         self.clear_push_btn.clicked.connect(self.clear_graph)
-        self.move_x_slider.valueChanged.connect(self.move_x_slider_update)
-        self.move_y_slider.valueChanged.connect(self.move_y_slider_update)
+        self.snap_shot_btn.clicked.connect(self.save_snap_shot)
         # signal buttons
-        self.hide_g1_check_btn.stateChanged.connect(self.hide_g1_btn_checked)
-        self.hide_g2_check_btn.stateChanged.connect(self.hide_g2_btn_checked)
-        self.color_g1_combo_btn.activated[str].connect(self.color_combo_selected)
-        self.color_g2_combo_btn.activated[str].connect(self.color_combo_selected)
         self.save_lbl_g1_btn.clicked.connect(self.save_changes_g1)
         self.save_lbl_g2_btn.clicked.connect(self.save_changes_g2)
         self.g_1_signals_combo_box.currentIndexChanged.connect(self.on_combobox_g_1_selection)
@@ -342,12 +376,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.sc_zoom_out.activated.connect(self.zoom_out)
         self.sc_rewind.activated.connect(self.rewind_graph)
 
-
-
-
-    #A function to let the user load the signal file, create another signal element in the dictionary, and send the file to the graph
-
-    
+    # A function to let the user load the signal file, create another signal element in the dictionary, and send the file to the graph
     def add_signal_to_graph_1(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
@@ -378,6 +407,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.g_1_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_1}")
             self.start_flag = False
         self.Handle_graph_1(self.signals_data_1)
+        # Update the table with the latest data
+        self.loaddata()
 
     def add_signal_to_graph_2(self):
             options = QFileDialog.Options()
@@ -406,14 +437,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.signals_data_2[self.count_signals_2] = [time_values, v_values, 'Red',
                                                              f"{'Signal'} - {self.count_signals_2}",
                                                              False, file_name]
-                # print(self.signals_data_1[self.count_signals_1][3])
                 self.g_2_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_2}")
                 self.start_flag = False
             self.Handle_graph_2(self.signals_data_2)
+            # Update the table with the latest data
+            self.loaddata()
 
-
-
-    # A function that displays the data of the siganl based on which signal has been selected from the comboBox
+    # A function that displays the data of the signal based on which signal has been selected from the comboBox
     def on_combobox_g_1_selection(self):
         self.selected_item_index = self.g_1_signals_combo_box.currentIndex()
         #print(self.selected_item_index)
@@ -421,8 +451,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         
         self.line_edit_g1.setText(self.signals_data_1[self.selected_item_index][3])
         self.hide_g1_check_btn.setChecked(self.signals_data_1[self.selected_item_index][4])
-
-       # print(self.signals_data_1[self.selected_item_index][2])
 
     def on_combobox_g_2_selection(self):
         self.selected_item_index = self.g_2_signals_combo_box.currentIndex()
@@ -432,12 +460,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.line_edit_g2.setText(self.signals_data_2[self.selected_item_index][3])
         self.hide_g2_check_btn.setChecked(self.signals_data_2[self.selected_item_index][4])
 
-    # print(self.signals_data_1[self.selected_item_index][2])
-        
-
     #A function that update the data of the signal whenever the user change the data and press on save button
     def save_changes_g1(self):
-        #selected_item_index = self.g_1_signals_combo_box.currentIndex()
+
         label_text = self.line_edit_g1.text()
         # Get the selected color from the ComboBox
         selected_color = self.color_g1_combo_btn.currentText()
@@ -447,16 +472,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.signals_data_1[self.selected_item_index][3] = label_text
         self.signals_data_1[self.selected_item_index][4] = checkbox_checked
         self.flag_1 = True
-        #self.flag_2 = True
-        #print(f'flag2 {self.flag_2}')
-        #print(self.signals_data_1[self.selected_item_index][2])
-        #print(self.signals_data_1[self.selected_item_index][3])
-        #print(self.signals_data_1[self.selected_item_index][4])
-        #print(checkbox_checked)
-        #print(selected_color)
+
 
     def save_changes_g2(self):
-        # selected_item_index = self.g_1_signals_combo_box.currentIndex()
+
         label_text = self.line_edit_g2.text()
         # Get the selected color from the ComboBox
         selected_color = self.color_g2_combo_btn.currentText()
@@ -466,19 +485,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.signals_data_2[self.selected_item_index][3] = label_text
         self.signals_data_2[self.selected_item_index][4] = checkbox_checked
         self.flag_2 = True
-        # self.flag_2 = True
-        # print(f'flag2 {self.flag_2}')
-        # print(self.signals_data_1[self.selected_item_index][2])
-        # print(self.signals_data_1[self.selected_item_index][3])
-        # print(self.signals_data_1[self.selected_item_index][4])
-        # print(checkbox_checked)
-        # print(selected_color)
+
 
     def capture_and_create_pdf(self):
-        # Create a PDF
-        options = QFileDialog.Options()
-        options |= QFileDialog.ReadOnly
-
         # Prompt the user to choose the destination directory and file name
         file_dialog = QFileDialog(self)
         file_dialog.setWindowTitle("Save PDF")
@@ -486,7 +495,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         file_dialog.setNameFilter("PDF files (*.pdf)")
         file_dialog.setAcceptMode(QFileDialog.AcceptSave)
 
-        if file_dialog.exec():
+        if file_dialog.exec_():
             selected_files = file_dialog.selectedFiles()
 
             if selected_files:
@@ -496,42 +505,250 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                     # Ensure the file has a .pdf extension
                     pdf_filename += ".pdf"
 
-                # Create a PDF file
-                pdf_buffer = BytesIO()
-                pdf_canvas = canvas.Canvas(pdf_buffer, pagesize=letter)
+                # Create a PDF document
+                doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
 
-                # Save the captured image to a temporary file
-                temp_image_path = "temp_image.png"
-                plot_widget_image = QImage(self.graphicsView_1.size(), QImage.Format_ARGB32)
-                plot_widget_image.fill(Qt.transparent)
-                painter = QPainter(plot_widget_image)
-                self.graphicsView_1.render(painter)
-                painter.end()
-                plot_widget_image.save(temp_image_path)
+                # Add tables with statistics for all signals in graph 1
+                for signal_index, signal_info in self.signals_data_1.items():
+                    time_values, signal_values, signal_color, signal_name, __, _ = signal_info
+                    mean_value = np.mean(signal_values)
+                    std_deviation = np.std(signal_values)
+                    duration = time_values[-1] - time_values[0]
+                    min_value = np.min(signal_values)
+                    max_value = np.max(signal_values)
 
-                # Add the captured image to the PDF
-                x_position = 50  # Adjust this value to set the horizontal position
-                y_position = 300  # Adjust this value to set the vertical position
-                pdf_canvas.drawImage(temp_image_path, x_position, y_position)
+                    # Add a title for the signal
+                    signal_name =f"Graph 1 {signal_info[3]}."
+                    self.pdf_content.append(Table([[signal_name]], style=[
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+                    ]))
 
-                # Add a comment or text annotation to the PDF
-                comment_x = 100  # Adjust this value to set the horizontal position of the comment
-                comment_y = 200  # Adjust this value to set the vertical position of the comment
-                comment_text = "----------------"
-                pdf_canvas.drawString(comment_x, comment_y, comment_text)
+                    # Add statistics to the table
+                    table_data = [["Statistic", "Value"]]
+                    stat_data = [
+                        ["Mean", f"{mean_value:.2f}"],
+                        ["Std Deviation", f"{std_deviation:.2f}"],
+                        ["Duration", f"{duration:.2f}"],
+                        ["Min", f"{min_value:.2f}"],
+                        ["Max", f"{max_value:.2f}"],
+                    ]
+                    table_data.extend(stat_data)
 
-                # Show the page and save the PDF
-                pdf_canvas.showPage()
-                pdf_canvas.save()
+                    # Create the table
+                    table = Table(table_data, colWidths=[2 * inch, 2 * inch])
+                    table.setStyle(TableStyle([
+                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                    ]))
 
-                # Close and save the PDF file
-                with open(pdf_filename, "wb") as f:
-                    f.write(pdf_buffer.getvalue())
+                    self.pdf_content.append(table)
 
-                # Delete the temporary image file
-                os.remove(temp_image_path)
+                # Add tables with statistics for all signals in graph 2
 
-                print(f'PDF with captured image and comment saved as {pdf_filename}')
+                for signal_index, signal_info in self.signals_data_2.items():
+                    time_values, signal_values, signal_color, signal_name, __, _ = signal_info
+                    mean_value = np.mean(signal_values)
+                    std_deviation = np.std(signal_values)
+                    duration = time_values[-1] - time_values[0]
+                    min_value = np.min(signal_values)
+                    max_value = np.max(signal_values)
+
+                    # Add a title for the signal
+                    signal_name = f"Graph 2 {signal_info[3]}."
+                    self.pdf_content.append(Table([[signal_name]], style=[
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+                    ]))
+
+                    # Add statistics to the table
+                    table_data = [["Statistic", "Value"]]
+                    stat_data = [
+                        ["Mean", f"{mean_value:.2f}"],
+                        ["Std Deviation", f"{std_deviation:.2f}"],
+                        ["Duration", f"{duration:.2f}"],
+                        ["Min", f"{min_value:.2f}"],
+                        ["Max", f"{max_value:.2f}"],
+                    ]
+                    table_data.extend(stat_data)
+
+                    # Create the table
+                    table = Table(table_data, colWidths=[2 * inch, 2 * inch])
+                    table.setStyle(TableStyle([
+                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                    ]))
+
+                    self.pdf_content.append(table)
+
+                # Build and save the PDF document
+                doc.build(self.pdf_content)
+
+                # Delete the temporary snapshot image
+                for i in range(self.snapshot_counter):
+                    self.snapshot_path = f"temp_snapshot_{i}.png"
+                    os.remove(self.snapshot_path)
+                self.snapshot_counter = 0
+                # Clear PDF file
+                self.pdf_content = []
+                self.title_pdf()
+                print(f'PDF with snapshots and statistics saved as {pdf_filename}')
+
+    def save_snap_shot(self):
+        if (self.graph_1_active == True and self.graph_2_active == False):
+
+            title = "Graph 1"
+            self.pdf_content.append(Table([[title]], style=[
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ]))
+            # Calculate the size of the snapshot image
+            plot_widget_image = QImage(self.graphicsView_1.size(), QImage.Format_ARGB32)
+            plot_widget_image.fill(Qt.transparent)
+            painter = QPainter(plot_widget_image)
+
+            # Ensure that the y-axis is visible
+            self.graphicsView_1.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
+            self.graphicsView_1.render(painter)
+
+            painter.end()
+
+            # Save the snapshot as a temporary image
+            # Create the snapshot path with an incrementing number
+            self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
+            plot_widget_image.save(self.snapshot_path)
+
+            print(self.snapshot_path)
+
+            # Add the snapshot image to the PDF
+            im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
+            self.pdf_content.append(im)
+            self.pdf_content.append(Spacer(1, 0.2 * inch))
+
+            # Increment the counter for the next snapshot
+            self.snapshot_counter += 1
+        elif (self.graph_1_active == False and self.graph_2_active == True):
+            title = "Graph 2"
+            self.pdf_content.append(Table([[title]], style=[
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ]))
+            # Calculate the size of the snapshot image
+            plot_widget_image = QImage(self.graphicsView_2.size(), QImage.Format_ARGB32)
+            plot_widget_image.fill(Qt.transparent)
+            painter = QPainter(plot_widget_image)
+
+            # Ensure that the y-axis is visible
+            self.graphicsView_2.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
+            self.graphicsView_2.render(painter)
+
+            painter.end()
+
+            # Save the snapshot as a temporary image
+            # Create the snapshot path with an incrementing number
+            self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
+            plot_widget_image.save(self.snapshot_path)
+
+            print(self.snapshot_path)
+
+            # Add the snapshot image to the PDF
+            im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
+            self.pdf_content.append(im)
+            self.pdf_content.append(Spacer(1, 0.2 * inch))
+
+            # Increment the counter for the next snapshot
+            self.snapshot_counter += 1
+        elif (self.graph_1_active == True and self.graph_2_active == True):
+            title = "Graph 1 & Graph 2"
+            self.pdf_content.append(Table([[title]], style=[
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ]))
+            # graph 1
+            # Calculate the size of the snapshot image
+            plot_widget_image = QImage(self.graphicsView_1.size(), QImage.Format_ARGB32)
+            plot_widget_image.fill(Qt.transparent)
+            painter = QPainter(plot_widget_image)
+
+            # Ensure that the y-axis is visible
+            self.graphicsView_1.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
+            self.graphicsView_1.render(painter)
+
+            painter.end()
+
+            # Save the snapshot as a temporary image
+            # Create the snapshot path with an incrementing number
+            self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
+            plot_widget_image.save(self.snapshot_path)
+
+            print(self.snapshot_path)
+
+            # Add the snapshot image to the PDF
+            im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
+            self.pdf_content.append(im)
+            self.pdf_content.append(Spacer(1, 0.2 * inch))
+
+            # Increment the counter for the next snapshot
+            self.snapshot_counter += 1
+            # graph 2
+            # Calculate the size of the snapshot image
+            plot_widget_image = QImage(self.graphicsView_2.size(), QImage.Format_ARGB32)
+            plot_widget_image.fill(Qt.transparent)
+            painter = QPainter(plot_widget_image)
+
+            # Ensure that the y-axis is visible
+            self.graphicsView_2.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
+            self.graphicsView_2.render(painter)
+
+            painter.end()
+
+            # Save the snapshot as a temporary image
+            # Create the snapshot path with an incrementing number
+            self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
+            plot_widget_image.save(self.snapshot_path)
+
+            print(self.snapshot_path)
+
+            # Add the snapshot image to the PDF
+            im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
+            self.pdf_content.append(im)
+            self.pdf_content.append(Spacer(1, 0.2 * inch))
+
+            # Increment the counter for the next snapshot
+            self.snapshot_counter += 1
+
+    def title_pdf(self):
+        # Add a title for the PDF
+        title = "Signal PDF Report"
+        self.pdf_content.append(Table([[title]], style=[
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ]))
+
     def graph1_selected(self ):
 
         self.graph_1_active = True
@@ -546,6 +763,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
         self.graph_1_active = True
         self.graph_2_active = True
+
     def speed_changed(self):
 
         if (self.current_speed_index == 3):
@@ -627,7 +845,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
            self.start_2 = 0
            self.end_2 = 0.154
 
-
     def zoom_out(self):
         if (self.graph_1_active == True and self.graph_2_active==False ):
             # Get the current visible x and y ranges
@@ -685,8 +902,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
            # Set the new visible x and y ranges
            self.graphicsView_2.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
-
-
 
     def zoom_in(self):
 
@@ -771,59 +986,83 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
            # Replot all the signals
            self.Handle_graph_2(self.signals_data_2)
 
-
-
-
-    def move_x_slider_update(self):
-        value = self.move_x_slider.value()
-        print(value)
-
-    def move_y_slider_update(self):
-        value = self.move_y_slider.value()
-        print(value)
-
-
-    def hide_g1_btn_checked(self):
-        if self.hide_g1_check_btn.isChecked() == True:
-            print("checked")
-
-        else:
-            print("unchecked")
-
-    def hide_g2_btn_checked(self):
-        if self.hide_g2_check_btn.isChecked() == True:
-            print("checked")
-
-        else:
-            print("unchecked")
-
-    def color_combo_selected(self, text):
-        print(text)
-
-   
-
-
-
-
     def loaddata(self):
-        signal = {
-            "mean": "----",
-            "std": "----",
-            "duration": "----",
-            "min": "----",
-            "max": "----"
-        }
+        # Clear the table
+        self.tableWidget.clear()
 
-        self.tableWidget.setColumnCount(len(signal))
+        # Get the number of signals and statistics
+        num_signals = len(self.signals_data_1) + len(self.signals_data_2)
+        num_stats = 5  # There are 5 statistics for each signal
 
-        column = 0
-        for key, value in signal.items():
-            self.tableWidget.setItem(0, column, QtWidgets.QTableWidgetItem(value))
-            self.tableWidget.setItem(1, column, QtWidgets.QTableWidgetItem(value))
-            self.tableWidget.setItem(2, column, QtWidgets.QTableWidgetItem(value))
-            self.tableWidget.setItem(3, column, QtWidgets.QTableWidgetItem(value))
-            self.tableWidget.setItem(4, column, QtWidgets.QTableWidgetItem(value))
-            column += 1    
+        # Set the table row count based on the number of signals and statistics
+        self.tableWidget.setRowCount(num_signals + 1)  # Signals rows (+1 for the statistic names)
+        self.tableWidget.setColumnCount(num_stats + 1)  # Statistics columns (+1 for signal labels)
+
+        # Define a list of statistic names
+        statistic_names = ["Statistic", "Mean", "Std", "Duration", "Min", "Max"]
+
+        # Set the table headers for statistics and signal labels
+        for col, header in enumerate(statistic_names):
+            self.tableWidget.setItem(0, col, QTableWidgetItem(header))
+
+        # Loop through each signal in graph 1 and populate the table with statistics
+        for signal_index, signal_info in self.signals_data_1.items():
+            time_values, signal_values, signal_color, signal_name, __, _ = signal_info
+
+            # Calculate statistics for the current signal
+            mean_value = np.mean(signal_values)
+            std_deviation = np.std(signal_values)
+            duration = time_values[-1] - time_values[0]
+            min_value = np.min(signal_values)
+            max_value = np.max(signal_values)
+
+            # Set the signal label in the row header
+            signal_name = f"Graph 1 {signal_info[3]}"
+            self.tableWidget.setItem(signal_index, 0, QTableWidgetItem(signal_name))
+
+            # Fill the table with statistics values based on the statistic name
+            for col, stat_name in enumerate(statistic_names[1:]):  # Skip "Statistic" for each statistic
+                # Fill the table with statistics values for the current signal
+                if stat_name == "Mean":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{mean_value:.2f}"))
+                elif stat_name == "Std":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{std_deviation:.2f}"))
+                elif stat_name == "Duration":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{duration:.2f}"))
+                elif stat_name == "Min":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{min_value:.2f}"))
+                elif stat_name == "Max":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{max_value:.2f}"))
+
+        # Loop through each signal in graph 2 and populate the table with statistics
+        for signal_index, signal_info in self.signals_data_2.items():
+            time_values, signal_values, signal_color, signal_name, __, _ = signal_info
+            signal_index = signal_index + len(self.signals_data_1)
+            # Calculate statistics for the current signal
+            mean_value = np.mean(signal_values)
+            std_deviation = np.std(signal_values)
+            duration = time_values[-1] - time_values[0]
+            min_value = np.min(signal_values)
+            max_value = np.max(signal_values)
+
+            # Set the signal label in the row header
+            signal_name = f"Graph 2 {signal_info[3]}"
+            self.tableWidget.setItem(signal_index, 0, QTableWidgetItem(signal_name))
+
+            # Fill the table with statistics values based on the statistic name
+            for col, stat_name in enumerate(statistic_names[1:]):  # Skip "Statistic" for each statistic
+                # Fill the table with statistics values for the current signal
+                if stat_name == "Mean":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{mean_value:.2f}"))
+                elif stat_name == "Std":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{std_deviation:.2f}"))
+                elif stat_name == "Duration":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{duration:.2f}"))
+                elif stat_name == "Min":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{min_value:.2f}"))
+                elif stat_name == "Max":
+                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{max_value:.2f}"))
+
 
 def main():  # method to start app
     app = QApplication(sys.argv)
