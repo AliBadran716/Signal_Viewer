@@ -223,8 +223,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graphicsView_1.setYRange(-self.max_y, self.max_y)
 
     def update_plot_data_1(self  ):
-        speed_of_signal = 9 / self.number_of_points
-        step_in_x = speed_of_signal * self.max_x
+        self.speed_of_signal = 9 / self.number_of_points
+        step_in_x = self.speed_of_signal * self.max_x
         self.end_indx_1+=9
         if(self.end_indx_1>=400 and self.end_indx_1<self.number_of_points):
             self.start_1 = self.start_1 + step_in_x
@@ -789,6 +789,40 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         else :    
             self.current_speed_index = self.current_speed_index + 1
             self.speed_push_btn.setText(self.speeds[self.current_speed_index])
+        
+        if self.speed_push_btn.text() == "x1":
+            if (self.graph_1_active and not self.graph_2_active):
+                self.timer_1.setInterval(50)  
+            elif(self.graph_2_active and not self.graph_1_active ) :
+                self.timer_2.setInterval(50)
+            else : 
+                self.timer_1.setInterval(50)  
+                self.timer_2.setInterval(50)
+
+        elif self.speed_push_btn.text() == "x1.25":
+            if (self.graph_1_active and not self.graph_2_active):
+                self.timer_1.setInterval(40)  
+            elif(self.graph_2_active and not self.graph_1_active ) :
+                self.timer_2.setInterval(40)
+            else : 
+                self.timer_1.setInterval(40)  
+                self.timer_2.setInterval(40)
+        elif self.speed_push_btn.text() == "x1.5":
+            if (self.graph_1_active and not self.graph_2_active):
+                self.timer_1.setInterval(33)  
+            elif(self.graph_2_active and not self.graph_1_active ) :
+                self.timer_2.setInterval(33)
+            else : 
+                self.timer_1.setInterval(33)  
+                self.timer_2.setInterval(33)
+        elif self.speed_push_btn.text() == "x2":
+            if (self.graph_1_active and not self.graph_2_active):
+                self.timer_1.setInterval(25)  
+            elif(self.graph_2_active and not self.graph_1_active ) :
+                self.timer_2.setInterval(25)
+            else : 
+                self.timer_1.setInterval(25)  
+                self.timer_2.setInterval(25)
 
         # A function that triggers between play and pause to control the flow of signals on graph
 
