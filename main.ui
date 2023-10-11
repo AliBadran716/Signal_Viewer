@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1176</width>
-    <height>688</height>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,10 +48,16 @@ color: rgba(0, 0, 0, 0.50);
        <layout class="QVBoxLayout" name="verticalLayout_8">
         <item>
          <widget class="QRadioButton" name="graph1_radio_btn">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="text">
            <string>Graph1</string>
           </property>
           <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
            <bool>true</bool>
           </property>
          </widget>
