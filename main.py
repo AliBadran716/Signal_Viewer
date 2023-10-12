@@ -1,71 +1,28 @@
-# PyQt5 importing
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.uic import loadUiType  # Live updating the design
-
+from PyQt5.uic import loadUiType
 import pyqtgraph as pg
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
-_translate = QtCore.QCoreApplication.translate
 from PyQt5.QtGui import QPixmap
-
 from pyqtgraph import PlotWidget, plot
-from PyQt5.QtWidgets import QFileDialog, QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsScene
 import numpy as np
 import pandas as pd
-from PyQt5.QtGui import QImageWriter
 from io import BytesIO
-
-
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Image
+from reportlab.lib import colors
+from reportlab.platypus import KeepTogether
 import os
 from os import path
 import sys
+from reportlab.lib.pagesizes import inch
 
 FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main.ui"))  # connects the Ui file with the Python file
-
-from reportlab.platypus import Table, TableStyle
-from reportlab.lib import colors  # Add this import
-from reportlab.lib.styles import getSampleStyleSheet
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PyQt5.uic import loadUiType
-from PyQt5.QtCore import QCoreApplication
-from pyqtgraph import PlotWidget
-
-from reportlab.lib.pagesizes import inch
-# Other imports...
-from reportlab.lib.pagesizes import letter, inch
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer
-from reportlab.pdfgen import canvas
-from reportlab.platypus import Spacer
-
-import sys
-import os
-from io import BytesIO
-import numpy as np
-import pandas as pd
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Image, Table, TableStyle, PageBreak, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib import colors
-
-
-
-from io import BytesIO
-
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-
-import os
-from os import path
 
 class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_class file
 
@@ -134,6 +91,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.snapshot_path=''
         self.snapshot_counter = 0
         self.title_pdf()
+        self.zoom_count_graph1 = 0  # Initialize zoom count for graph 1
+        self.zoom_count_graph2 = 0  # Initialize zoom count for graph 2
     
 
 
@@ -540,7 +499,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.signals_data_2[self.selected_item_index][3] = label_text
         self.flag_2 = True
 
-
     def capture_and_create_pdf(self):
         # Prompt the user to choose the destination directory and file name
         file_dialog = QFileDialog(self)
@@ -572,7 +530,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                     max_value = np.max(signal_values)
 
                     # Add a title for the signal
-                    signal_name =f"Graph 1 {signal_info[3]}."
+                    signal_name = f"Graph 1 {signal_info[3]}."
                     self.pdf_content.append(Table([[signal_name]], style=[
                         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                         ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
@@ -607,7 +565,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                     self.pdf_content.append(table)
 
                 # Add tables with statistics for all signals in graph 2
-
                 for signal_index, signal_info in self.signals_data_2.items():
                     time_values, signal_values, signal_color, signal_name, __, _ = signal_info
                     mean_value = np.mean(signal_values)
@@ -661,137 +618,77 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.snapshot_counter = 0
                 # Clear PDF file
                 self.pdf_content = []
-                self.title_pdf()
                 print(f'PDF with snapshots and statistics saved as {pdf_filename}')
 
+    def add_table_to_pdf(self, data, title):
+        # Add a title for the table
+        self.pdf_content.append(Table([[title]], style=[
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ]))
+
+        # Create the table
+        table = Table(data, colWidths=[2 * inch, 2 * inch])
+        table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+
+        # Use KeepTogether to keep title and table on the same page
+        title_table = KeepTogether([table])
+
+        self.pdf_content.append(title_table)
+
     def save_snap_shot(self):
-        if (self.graph_1_active == True and self.graph_2_active == False):
+        if self.graph_1_active:
+            self.save_graph_snapshot(self.graphicsView_1, "Graph 1")
+        if self.graph_2_active:
+            self.save_graph_snapshot(self.graphicsView_2, "Graph 2")
+        if self.graph_1_active and self.graph_2_active:
+            self.save_graph_snapshot(self.graphicsView_1, "Graph 1 & Graph 2")
+            self.save_graph_snapshot(self.graphicsView_2, "Graph 1 & Graph 2")
 
-            title = "Graph 1"
-            self.pdf_content.append(Table([[title]], style=[
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-            ]))
-            # Calculate the size of the snapshot image
-            plot_widget_image = QImage(self.graphicsView_1.size(), QImage.Format_ARGB32)
-            plot_widget_image.fill(Qt.transparent)
-            painter = QPainter(plot_widget_image)
+    def save_graph_snapshot(self, graphics_view, title):
+        self.pdf_content.append(Table([[title]], style=[
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ]))
 
-            # Ensure that the y-axis is visible
-            self.graphicsView_1.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
-            self.graphicsView_1.render(painter)
+        # Calculate the size of the snapshot image
+        plot_widget_image = QImage(graphics_view.size(), QImage.Format_ARGB32)
+        plot_widget_image.fill(Qt.transparent)
+        painter = QPainter(plot_widget_image)
 
-            painter.end()
+        # Ensure that the y-axis is visible
+        graphics_view.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
+        graphics_view.render(painter)
 
-            # Save the snapshot as a temporary image
-            # Create the snapshot path with an incrementing number
-            self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
-            plot_widget_image.save(self.snapshot_path)
+        painter.end()
 
-            print(self.snapshot_path)
+        # Save the snapshot as a temporary image
+        # Create the snapshot path with an incrementing number
+        self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
+        plot_widget_image.save(self.snapshot_path)
 
-            # Add the snapshot image to the PDF
-            im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
-            self.pdf_content.append(im)
-            self.pdf_content.append(Spacer(1, 0.2 * inch))
+        print(self.snapshot_path)
 
-            # Increment the counter for the next snapshot
-            self.snapshot_counter += 1
-        elif (self.graph_1_active == False and self.graph_2_active == True):
-            title = "Graph 2"
-            self.pdf_content.append(Table([[title]], style=[
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-            ]))
-            # Calculate the size of the snapshot image
-            plot_widget_image = QImage(self.graphicsView_2.size(), QImage.Format_ARGB32)
-            plot_widget_image.fill(Qt.transparent)
-            painter = QPainter(plot_widget_image)
+        # Add the snapshot image to the PDF
+        im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
+        self.pdf_content.append(im)
+        self.pdf_content.append(Spacer(1, 0.2 * inch))
 
-            # Ensure that the y-axis is visible
-            self.graphicsView_2.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
-            self.graphicsView_2.render(painter)
-
-            painter.end()
-
-            # Save the snapshot as a temporary image
-            # Create the snapshot path with an incrementing number
-            self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
-            plot_widget_image.save(self.snapshot_path)
-
-            print(self.snapshot_path)
-
-            # Add the snapshot image to the PDF
-            im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
-            self.pdf_content.append(im)
-            self.pdf_content.append(Spacer(1, 0.2 * inch))
-
-            # Increment the counter for the next snapshot
-            self.snapshot_counter += 1
-        elif (self.graph_1_active == True and self.graph_2_active == True):
-            title = "Graph 1 & Graph 2"
-            self.pdf_content.append(Table([[title]], style=[
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-            ]))
-            # graph 1
-            # Calculate the size of the snapshot image
-            plot_widget_image = QImage(self.graphicsView_1.size(), QImage.Format_ARGB32)
-            plot_widget_image.fill(Qt.transparent)
-            painter = QPainter(plot_widget_image)
-
-            # Ensure that the y-axis is visible
-            self.graphicsView_1.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
-            self.graphicsView_1.render(painter)
-
-            painter.end()
-
-            # Save the snapshot as a temporary image
-            # Create the snapshot path with an incrementing number
-            self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
-            plot_widget_image.save(self.snapshot_path)
-
-            print(self.snapshot_path)
-
-            # Add the snapshot image to the PDF
-            im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
-            self.pdf_content.append(im)
-            self.pdf_content.append(Spacer(1, 0.2 * inch))
-
-            # Increment the counter for the next snapshot
-            self.snapshot_counter += 1
-            # graph 2
-            # Calculate the size of the snapshot image
-            plot_widget_image = QImage(self.graphicsView_2.size(), QImage.Format_ARGB32)
-            plot_widget_image.fill(Qt.transparent)
-            painter = QPainter(plot_widget_image)
-
-            # Ensure that the y-axis is visible
-            self.graphicsView_2.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
-            self.graphicsView_2.render(painter)
-
-            painter.end()
-
-            # Save the snapshot as a temporary image
-            # Create the snapshot path with an incrementing number
-            self.snapshot_path = f"temp_snapshot_{self.snapshot_counter}.png"
-            plot_widget_image.save(self.snapshot_path)
-
-            print(self.snapshot_path)
-
-            # Add the snapshot image to the PDF
-            im = Image(self.snapshot_path, width=6 * inch, height=4 * inch)
-            self.pdf_content.append(im)
-            self.pdf_content.append(Spacer(1, 0.2 * inch))
-
-            # Increment the counter for the next snapshot
-            self.snapshot_counter += 1
+        # Increment the counter for the next snapshot
+        self.snapshot_counter += 1
 
     def title_pdf(self):
         # Add a title for the PDF
@@ -803,7 +700,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
         ]))
 
-    def graph1_selected(self ):
+    def graph1_selected(self):
 
         self.graph_1_active = True
         self.graph_2_active = False
@@ -819,316 +716,168 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graph_2_active = True
 
     def speed_changed(self):
+        speed_mapping = {
+            "x1": 50,
+            "x1.25": 40,
+            "x1.5": 33,
+            "x2": 25
+        }
 
-        if (self.current_speed_index == 3):
-            self.speed_push_btn.setText(self.speeds[0])
+        if self.current_speed_index == 3:
             self.current_speed_index = 0
-        else :    
-            self.current_speed_index = self.current_speed_index + 1
-            self.speed_push_btn.setText(self.speeds[self.current_speed_index])
-        
-        if self.speed_push_btn.text() == "x1":
-            if (self.graph_1_active and not self.graph_2_active):
-                self.timer_1.setInterval(50)  
-            elif(self.graph_2_active and not self.graph_1_active ) :
-                self.timer_2.setInterval(50)
-            else : 
-                self.timer_1.setInterval(50)  
-                self.timer_2.setInterval(50)
+        else:
+            self.current_speed_index += 1
 
-        elif self.speed_push_btn.text() == "x1.25":
-            if (self.graph_1_active and not self.graph_2_active):
-                self.timer_1.setInterval(40)  
-            elif(self.graph_2_active and not self.graph_1_active ) :
-                self.timer_2.setInterval(40)
-            else : 
-                self.timer_1.setInterval(40)  
-                self.timer_2.setInterval(40)
-        elif self.speed_push_btn.text() == "x1.5":
-            if (self.graph_1_active and not self.graph_2_active):
-                self.timer_1.setInterval(33)  
-            elif(self.graph_2_active and not self.graph_1_active ) :
-                self.timer_2.setInterval(33)
-            else : 
-                self.timer_1.setInterval(33)  
-                self.timer_2.setInterval(33)
-        elif self.speed_push_btn.text() == "x2":
-            if (self.graph_1_active and not self.graph_2_active):
-                self.timer_1.setInterval(25)  
-            elif(self.graph_2_active and not self.graph_1_active ) :
-                self.timer_2.setInterval(25)
-            else : 
-                self.timer_1.setInterval(25)  
-                self.timer_2.setInterval(25)
+        speed_text = self.speeds[self.current_speed_index]
+        self.speed_push_btn.setText(speed_text)
+
+        if self.graph_1_active:
+            self.timer_1.setInterval(speed_mapping[speed_text])
+
+        if self.graph_2_active:
+            self.timer_2.setInterval(speed_mapping[speed_text])
 
         # A function that triggers between play and pause to control the flow of signals on graph
 
     def play_pause(self):
-
-        if (self.graph_1_active == True and self.graph_2_active==False ):
+        if self.graph_1_active:
             self.is_playing_g_1 = not self.is_playing_g_1
             if self.is_playing_g_1:
                 self.timer_1.start()
-            # print('start')
-
             else:
                 self.timer_1.stop()
-            # print('stop')
-        elif (self.graph_1_active == False and self.graph_2_active==True):
+
+        if self.graph_2_active:
             self.is_playing_g_2 = not self.is_playing_g_2
             if self.is_playing_g_2:
                 self.timer_2.start()
-            # print('start')
-
             else:
                 self.timer_2.stop()
-            # print('stop')
-        elif (self.graph_1_active == True and self.graph_2_active==True):
-           # graph 1
-            self.is_playing_g_1 = not self.is_playing_g_1
-            self.is_playing_g_2 = self.is_playing_g_1
+
+        # Check if both graphs are active and in sync
+        if self.graph_1_active and self.graph_2_active:
             if self.is_playing_g_1:
-                self.timer_1.start()
-            else:
-                self.timer_1.stop()
-            # graph 2
-            if self.is_playing_g_2:
+                self.is_playing_g_2 = True
                 self.timer_2.start()
             else:
+                self.is_playing_g_2 = False
                 self.timer_2.stop()
 
     def clear_graph(self):
-        if (self.graph_1_active == True and self.graph_2_active==False ):
-            self.timer_1.stop()  # Stop the timer
-            self.graphicsView_1.clear()  # Clear the graph
-
-            # Reset start, end, and end_indx
+        if self.graph_1_active:
+            self.timer_1.stop()
+            self.graphicsView_1.clear()
             self.end_indx_1 = 50
             self.start_1 = 0
             self.end_1 = 0.154
-        elif (self.graph_1_active == False and self.graph_2_active==True):
-            self.timer_2.stop()  # Stop the timer
-            self.graphicsView_2.clear()  # Clear the graph
-
-            # Reset start, end, and end_indx
+        if self.graph_2_active:
+            self.timer_2.stop()
+            self.graphicsView_2.clear()
             self.end_indx_2 = 50
             self.start_2 = 0
             self.end_2 = 0.154
-        elif (self.graph_1_active == True and self.graph_2_active==True):
-           # graph 1
-           self.timer_1.stop()  # Stop the timer
-           self.graphicsView_1.clear()  # Clear the graph
 
-           # Reset start, end, and end_indx
-           self.end_indx_1 = 50
-           self.start_1 = 0
-           self.end_1 = 0.154
+    def zoom(self, graphicsView, zoom_factor):
+        # Get the current visible x and y ranges
+        x_min, x_max = graphicsView.getViewBox().viewRange()[0]
+        y_min, y_max = graphicsView.getViewBox().viewRange()[1]
 
-           # graph 2
-           self.timer_2.stop()  # Stop the timer
-           self.graphicsView_2.clear()  # Clear the graph
+        # Calculate the new visible x and y ranges (zoom)
+        new_x_min = x_min * zoom_factor
+        new_x_max = x_max * zoom_factor
+        new_y_min = y_min * zoom_factor
+        new_y_max = y_max * zoom_factor
 
-           # Reset start, end, and end_indx
-           self.end_indx_2 = 50
-           self.start_2 = 0
-           self.end_2 = 0.154
+        # Set the new visible x and y ranges
+        graphicsView.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
 
     def zoom_out(self):
-        if (self.graph_1_active == True and self.graph_2_active==False ):
-            # Get the current visible x and y ranges
-            x_min, x_max = self.graphicsView_1.getViewBox().viewRange()[0]
-            y_min, y_max = self.graphicsView_1.getViewBox().viewRange()[1]
-
-            # Calculate the new visible x and y ranges (zoom in)
-            new_x_min = x_min * 0.5
-            new_x_max = x_max * 0.5
-            new_y_min = y_min * 0.5
-            new_y_max = y_max * 0.5
-
-            # Set the new visible x and y ranges
-            self.graphicsView_1.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
-
-        elif (self.graph_1_active == False and self.graph_2_active==True):
-            # Get the current visible x and y ranges
-            x_min, x_max = self.graphicsView_2.getViewBox().viewRange()[0]
-            y_min, y_max = self.graphicsView_2.getViewBox().viewRange()[1]
-
-            # Calculate the new visible x and y ranges (zoom in)
-            new_x_min = x_min * 0.5
-            new_x_max = x_max * 0.5
-            new_y_min = y_min * 0.5
-            new_y_max = y_max * 0.5
-
-            # Set the new visible x and y ranges
-            self.graphicsView_2.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
-        elif (self.graph_1_active == True and self.graph_2_active==True):
-           # graph 1
-
-           # Get the current visible x and y ranges
-           x_min, x_max = self.graphicsView_1.getViewBox().viewRange()[0]
-           y_min, y_max = self.graphicsView_1.getViewBox().viewRange()[1]
-
-           # Calculate the new visible x and y ranges (zoom in)
-           new_x_min = x_min * 0.5
-           new_x_max = x_max * 0.5
-           new_y_min = y_min * 0.5
-           new_y_max = y_max * 0.5
-
-           # Set the new visible x and y ranges
-           self.graphicsView_1.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
-            # graph 2
-
-           # Get the current visible x and y ranges
-           x_min, x_max = self.graphicsView_2.getViewBox().viewRange()[0]
-           y_min, y_max = self.graphicsView_2.getViewBox().viewRange()[1]
-
-           # Calculate the new visible x and y ranges (zoom in)
-           new_x_min = x_min * 0.5
-           new_x_max = x_max * 0.5
-           new_y_min = y_min * 0.5
-           new_y_max = y_max * 0.5
-
-           # Set the new visible x and y ranges
-           self.graphicsView_2.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
+        if self.graph_1_active:
+            if self.zoom_count_graph1 > -3:
+                self.zoom(self.graphicsView_1, 0.5)
+                self.zoom_count_graph1 -= 1
+        if self.graph_2_active:
+            if self.zoom_count_graph2 > -3:
+                self.zoom(self.graphicsView_2, 0.5)
+                self.zoom_count_graph2 -= 1
 
     def zoom_in(self):
-
-        if (self.graph_1_active == True and self.graph_2_active == False):
-            # Get the current visible x and y ranges
-            x_min, x_max = self.graphicsView_1.getViewBox().viewRange()[0]
-            y_min, y_max = self.graphicsView_1.getViewBox().viewRange()[1]
-
-            # Calculate the new visible x and y ranges (zoom in)
-            new_x_min = x_min * 1.3
-            new_x_max = x_max * 1.3
-            new_y_min = y_min * 1.3
-            new_y_max = y_max * 1.3
-
-            # Set the new visible x and y ranges
-            self.graphicsView_1.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
-
-        elif (self.graph_1_active == False and self.graph_2_active == True):
-            # Get the current visible x and y ranges
-            x_min, x_max = self.graphicsView_2.getViewBox().viewRange()[0]
-            y_min, y_max = self.graphicsView_2.getViewBox().viewRange()[1]
-
-            # Calculate the new visible x and y ranges (zoom in)
-            new_x_min = x_min * 1.3
-            new_x_max = x_max * 1.3
-            new_y_min = y_min * 1.3
-            new_y_max = y_max * 1.3
-
-            # Set the new visible x and y ranges
-            self.graphicsView_2.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
-        elif (self.graph_1_active == True and self.graph_2_active == True):
-            # graph 1
-            # Get the current visible x and y ranges
-            x_min, x_max = self.graphicsView_1.getViewBox().viewRange()[0]
-            y_min, y_max = self.graphicsView_1.getViewBox().viewRange()[1]
-
-            # Calculate the new visible x and y ranges (zoom in)
-            new_x_min = x_min * 1.3
-            new_x_max = x_max * 1.3
-            new_y_min = y_min * 1.3
-            new_y_max = y_max * 1.3
-
-            # Set the new visible x and y ranges
-            self.graphicsView_1.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
-            # graph 2
-            # Get the current visible x and y ranges
-            x_min, x_max = self.graphicsView_2.getViewBox().viewRange()[0]
-            y_min, y_max = self.graphicsView_2.getViewBox().viewRange()[1]
-
-            # Calculate the new visible x and y ranges (zoom in)
-            new_x_min = x_min * 1.3
-            new_x_max = x_max * 1.3
-            new_y_min = y_min * 1.3
-            new_y_max = y_max * 1.3
-
-            # Set the new visible x and y ranges
-            self.graphicsView_2.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
-
+        if self.graph_1_active:
+            if self.zoom_count_graph1 < 5:  # Set your desired limit
+                self.zoom(self.graphicsView_1, 1.3)
+                self.zoom_count_graph1 += 1
+        if self.graph_2_active:
+            if self.zoom_count_graph2 < 5:  # Set your desired limit
+                self.zoom(self.graphicsView_2, 1.3)
+                self.zoom_count_graph2 += 1
     def rewind_graph(self):
-        if (self.graph_1_active == True and self.graph_2_active==False ):
-            # Clear Graph
+        if self.graph_1_active:
+            # Clear Graph for graph 1
             self.clear_graph()
-
-            # Replot all the signals
+            # Replot signals for graph 1
             self.Handle_graph_1(self.signals_data_1)
-        elif (self.graph_1_active == False and self.graph_2_active==True):
-            # Clear Graph
+        if self.graph_2_active:
+            # Clear Graph for graph 2
             self.clear_graph()
-
-            # Replot all the signals
+            # Replot signals for graph 2
             self.Handle_graph_2(self.signals_data_2)
-        elif (self.graph_1_active == True and self.graph_2_active==True):
-           # graph 1
-           # Clear Graph
-           self.clear_graph()
-
-           # Replot all the signals
-           self.Handle_graph_1(self.signals_data_1)
-
-           # graph 2
-
-           # Replot all the signals
-           self.Handle_graph_2(self.signals_data_2)
+        if self.graph_1_active and self.graph_2_active:
+            # Both graphs are active, so rewind both
+            self.clear_graph()
+            self.Handle_graph_1(self.signals_data_1)
+            self.Handle_graph_2(self.signals_data_2)
 
     def onSliderValueChanged_y(self, value):
-        if(self.graph_1_active == True and self.graph_2_active == False):
-            self.graphicsView_1.setYRange(-self.max_y_1 + 0.07*value, self.max_y_1+0.07*value)
-        if(self.graph_2_active == True and self.graph_1_active == False):
-            self.graphicsView_2.setYRange(-self.max_y_2 + 0.07*value, self.max_y_2+0.07*value)
-        if(self.graph_1_active == True and self.graph_2_active == True):
-            self.graphicsView_1.setYRange(-self.max_y_1 + 0.07*value, self.max_y_1+0.07*value)
-            self.graphicsView_2.setYRange(-self.max_y_2 + 0.07*value, self.max_y_2+0.07*value)
+        y_range_offset = 0.07 * value
+        if self.graph_1_active:
+            self.graphicsView_1.setYRange(-self.max_y_1 + y_range_offset, self.max_y_1 + y_range_offset)
+        if self.graph_2_active:
+            self.graphicsView_2.setYRange(-self.max_y_2 + y_range_offset, self.max_y_2 + y_range_offset)
+
     def onSliderValueChanged_x(self, value):
-        if(self.graph_1_active == True and self.graph_2_active == False ):
-            if (self.end_indx_1 <= 500 ):
-                self.graphicsView_1.setXRange(0 + 0.0007*value, 0.154+0.0007*value)
+        x_range_offset = 0.0007 * value
+        if self.graph_1_active:
+            if self.end_indx_1 <= 500:
+                self.graphicsView_1.setXRange(0 + x_range_offset, 0.154 + x_range_offset)
             else:
-                if(self.end_indx_1 > 500):
-                    self.graphicsView_1.setXRange(self.start_1+ 0.0007*value, self.end_1+ 0.0007*value)
-        
-        
-        if(self.graph_2_active == True and self.graph_1_active == False ):
-            if (self.end_indx_1 <= 500 ):
-                self.graphicsView_2.setXRange(0 + 0.0007*value, 0.154+0.0007*value)
+                self.graphicsView_1.setXRange(self.start_1 + x_range_offset, self.end_1 + x_range_offset)
+        if self.graph_2_active:
+            if self.end_indx_1 <= 500:
+                self.graphicsView_2.setXRange(0 + x_range_offset, 0.154 + x_range_offset)
             else:
-                if(self.end_indx_1 > 500):
-                    self.graphicsView_2.setXRange(self.start_1+ 0.0007*value, self.end_1+ 0.0007*value)
-        
-        
-        if(self.graph_1_active == True and self.graph_2_active == True ):
-           if (self.end_indx_1 <= 500 ):
-                self.graphicsView_1.setXRange(0 + 0.0007*value, 0.154+0.0007*value)
-                self.graphicsView_2.setXRange(0 + 0.0007*value, 0.154+0.0007*value)
-           else:
-                if(self.end_indx_1 > 500):
-                    self.graphicsView_1.setXRange(self.start_1+ 0.0007*value, self.end_1+ 0.0007*value)
-                    self.graphicsView_2.setXRange(self.start_1+ 0.0007*value, self.end_1+ 0.0007*value)
+                self.graphicsView_2.setXRange(self.start_1 + x_range_offset, self.end_1 + x_range_offset)
+
     def loaddata(self):
         # Clear the table
         self.tableWidget.clear()
 
-        # Get the number of signals and statistics
-        num_signals = len(self.signals_data_1) + len(self.signals_data_2)
-        num_stats = 5  # There are 5 statistics for each signal
-
-        # Set the table row count based on the number of signals and statistics
-        self.tableWidget.setRowCount(num_signals + 1)  # Signals rows (+1 for the statistic names)
-        self.tableWidget.setColumnCount(num_stats + 1)  # Statistics columns (+1 for signal labels)
-
         # Define a list of statistic names
         statistic_names = ["Statistic", "Mean", "Std", "Duration", "Min", "Max"]
+
+        # Create a dictionary to map signal indices to signal information
+        signal_index_info_map = {}
+
+        # Loop through each signal in graph 1 and populate the signal_index_info_map
+        for signal_index, signal_info in self.signals_data_1.items():
+            signal_index_info_map[signal_index] = ("Graph 1 " + signal_info[3], signal_info)
+
+        # Loop through each signal in graph 2 and populate the signal_index_info_map
+        for signal_index, signal_info in self.signals_data_2.items():
+            signal_index_info_map[signal_index + len(self.signals_data_1)] = ("Graph 2 " + signal_info[3], signal_info)
+
+        num_signals = len(signal_index_info_map)
+        num_stats = 5  # There are 5 statistics for each signal
+
+        self.tableWidget.setRowCount(num_signals + 1)  # Signals rows (+1 for the statistic names)
+        self.tableWidget.setColumnCount(num_stats + 1)  # Statistics columns (+1 for signal labels)
 
         # Set the table headers for statistics and signal labels
         for col, header in enumerate(statistic_names):
             self.tableWidget.setItem(0, col, QTableWidgetItem(header))
 
-        # Loop through each signal in graph 1 and populate the table with statistics
-        for signal_index, signal_info in self.signals_data_1.items():
-            time_values, signal_values, signal_color, signal_name, __, _ = signal_info
+        # Loop through each signal in the signal_index_info_map and populate the table with statistics
+        for signal_index, (signal_name, signal_info) in signal_index_info_map.items():
+            time_values, signal_values, signal_color, __, _, _ = signal_info
 
             # Calculate statistics for the current signal
             mean_value = np.mean(signal_values)
@@ -1138,36 +887,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             max_value = np.max(signal_values)
 
             # Set the signal label in the row header
-            signal_name = f"Graph 1 {signal_info[3]}"
-            self.tableWidget.setItem(signal_index, 0, QTableWidgetItem(signal_name))
-
-            # Fill the table with statistics values based on the statistic name
-            for col, stat_name in enumerate(statistic_names[1:]):  # Skip "Statistic" for each statistic
-                # Fill the table with statistics values for the current signal
-                if stat_name == "Mean":
-                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{mean_value:.2f}"))
-                elif stat_name == "Std":
-                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{std_deviation:.2f}"))
-                elif stat_name == "Duration":
-                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{duration:.2f}"))
-                elif stat_name == "Min":
-                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{min_value:.2f}"))
-                elif stat_name == "Max":
-                    self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{max_value:.2f}"))
-
-        # Loop through each signal in graph 2 and populate the table with statistics
-        for signal_index, signal_info in self.signals_data_2.items():
-            time_values, signal_values, signal_color, signal_name, __, _ = signal_info
-            signal_index = signal_index + len(self.signals_data_1)
-            # Calculate statistics for the current signal
-            mean_value = np.mean(signal_values)
-            std_deviation = np.std(signal_values)
-            duration = time_values[-1] - time_values[0]
-            min_value = np.min(signal_values)
-            max_value = np.max(signal_values)
-
-            # Set the signal label in the row header
-            signal_name = f"Graph 2 {signal_info[3]}"
             self.tableWidget.setItem(signal_index, 0, QTableWidgetItem(signal_name))
 
             # Fill the table with statistics values based on the statistic name
