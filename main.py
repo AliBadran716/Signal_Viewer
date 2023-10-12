@@ -509,6 +509,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         selected_color = self.color_g1_combo_btn.currentText()
         self.signals_data_1[selected_item_index][2] = selected_color
         self.signals_data_1[selected_item_index][3] = label_text
+        self.g_1_signals_combo_box.setItemText(selected_item_index, label_text)
         self.flag_1 = True
 
     def save_changes_g2(self):
@@ -520,6 +521,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         selected_color = self.color_g2_combo_btn.currentText()
         self.signals_data_2[selected_item_index][2] = selected_color
         self.signals_data_2[selected_item_index][3] = label_text
+        self.g_2_signals_combo_box.setItemText(selected_item_index, label_text)
         self.flag_2 = True
 
     def reindex_dict_keys(self, dictionary):
@@ -822,7 +824,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def on_combobox_speed_selection(self):
         if not self.signals_data_1 and not self.signals_data_2:
             return
-        speed_list = [50, 40, 33, 25]
+        speed_list = [50, 44, 38, 31, 25]
         speed_index = self.speed_selection.currentIndex() - 1
         if self.graph_1_active:
             self.timer_1.setInterval(speed_list[speed_index])
