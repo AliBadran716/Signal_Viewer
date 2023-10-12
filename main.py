@@ -33,7 +33,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.setupUi(self)
         self.Handle_btn()
         self.shortcuts()
-        self.selected_item_index = 0 
         self.move_y_slider.setMinimum(-50) 
         self.move_y_slider.setMaximum(50)   
         self.move_y_slider.setSliderPosition(0)
@@ -62,9 +61,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.loaddata()
         self.file_names_1 = []
         self.file_names_2 = []
-        self.speeds = ["x1", "x1.25", "x1.5", "x2"]
-        self.current_speed_index = 0
-        self.speed_push_btn.setText(self.speeds[self.current_speed_index])
         self.loaddata()
         self.colors = []
         self.hide_signals = []
@@ -93,6 +89,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.title_pdf()
         self.zoom_count_graph1 = 0  # Initialize zoom count for graph 1
         self.zoom_count_graph2 = 0  # Initialize zoom count for graph 2
+        self.g_1_delete = False
     
 
 
@@ -189,6 +186,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
            data_line.y_data = y
            self.data_lines_1.append(data_line)
            #print(len(self.data_lines_1))
+        if not self.signals_data_1:
+            return
         self.timer_1 = QtCore.QTimer()
         self.timer_1.setInterval(50)
         self.timer_1.timeout.connect(self.update_plot_data_1)
@@ -279,6 +278,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             data_line.y_data = y
             self.data_lines_2.append(data_line)
             # print(len(self.data_lines_2))
+        if not self.signals_data_2:
+            return
         self.timer_2 = QtCore.QTimer()
         self.timer_2.setInterval(50)
         self.timer_2.timeout.connect(self.update_plot_data_2)
@@ -338,7 +339,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graph1_radio_btn.toggled.connect(self.graph1_selected)
         self.graph2_radio_btn.toggled.connect(self.graph2_selected)
         self.link_radio_btn.toggled.connect(self.link_selected)
-        self.speed_push_btn.clicked.connect(self.speed_changed)
+        self.speed_selection.currentIndexChanged.connect(self.on_combobox_speed_selection)
         self.play_pause_btn.clicked.connect(self.play_pause)
         self.zoom_out_push_btn.clicked.connect(self.zoom_out)
         self.zoom_in_push_btn.clicked.connect(self.zoom_in)
@@ -346,12 +347,16 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.clear_push_btn.clicked.connect(self.clear_graph)
         self.snap_shot_btn.clicked.connect(self.save_snap_shot)
         # signal buttons
-        self.show_g1_check_btn.stateChanged.connect(self.show_hide_signal_g_1)
-        self.show_g2_check_btn.stateChanged.connect(self.show_hide_signal_g_2)
-        self.save_lbl_g1_btn.clicked.connect(self.save_changes_g1)
-        self.save_lbl_g2_btn.clicked.connect(self.save_changes_g2)
         self.g_1_signals_combo_box.currentIndexChanged.connect(self.on_combobox_g_1_selection)
         self.g_2_signals_combo_box.currentIndexChanged.connect(self.on_combobox_g_2_selection)
+        self.delete_g1_btn.clicked.connect(self.delete_signal_g_1)
+        self.delete_g2_btn.clicked.connect(self.delete_signal_g_2)
+        self.save_lbl_g1_btn.clicked.connect(self.save_changes_g1)
+        self.save_lbl_g2_btn.clicked.connect(self.save_changes_g2)
+        self.show_g1_check_btn.stateChanged.connect(self.show_hide_signal_g_1)
+        self.show_g2_check_btn.stateChanged.connect(self.show_hide_signal_g_2)
+        self.move_g1_btn.clicked.connect(self.move_signal_g_1)
+        self.move_g2_btn.clicked.connect(self.move_signal_g_2)
 
     # A Function  that defines some shortcuts to make the work with our app more easier
     def shortcuts(self):
@@ -377,7 +382,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.sc_g1.activated.connect(self.graph1_selected)
         self.sc_g2.activated.connect(self.graph2_selected)
         self.sc_link.activated.connect(self.link_selected)
-        self.sc_speed.activated.connect(self.speed_changed)
+        self.sc_speed.activated.connect(self.on_combobox_speed_selection)
         self.sc_play.activated.connect(self.play_pause)
         self.sc_clear.activated.connect(self.clear_graph)
         self.sc_zoom_in.activated.connect(self.zoom_in)
@@ -417,7 +422,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.Handle_graph_1(self.signals_data_1)
         # Update the table with the latest data
         self.loaddata()
-        
 
     def add_signal_to_graph_2(self):
             options = QFileDialog.Options()
@@ -451,53 +455,153 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.Handle_graph_2(self.signals_data_2)
             # Update the table with the latest data
             self.loaddata()
-            
+
 
     # A function that displays the data of the signal based on which signal has been selected from the comboBox
     def on_combobox_g_1_selection(self):
-        self.selected_item_index = self.g_1_signals_combo_box.currentIndex()
-        #print(self.selected_item_index)
-        self.color_g1_combo_btn.setCurrentText(self.signals_data_1[self.selected_item_index][2])
-        
-        self.line_edit_g1.setText(self.signals_data_1[self.selected_item_index][3])
-        self.show_g1_check_btn.setChecked(self.signals_data_1[self.selected_item_index][4])
+        selected_item_index = self.g_1_signals_combo_box.currentIndex()
+        if not self.signals_data_1 or self.g_1_signals_combo_box.currentIndex() <= 0:
+            self.color_g1_combo_btn.setCurrentIndex(selected_item_index)
+            self.line_edit_g1.clear()
+            self.show_g1_check_btn.setChecked(False)
+        else:
+
+            self.color_g1_combo_btn.setCurrentText(self.signals_data_1[selected_item_index][2])
+            self.line_edit_g1.setText(self.signals_data_1[selected_item_index][3])
+            self.show_g1_check_btn.setChecked(self.signals_data_1[selected_item_index][4])
 
     def on_combobox_g_2_selection(self):
-        self.selected_item_index = self.g_2_signals_combo_box.currentIndex()
-        # print(self.selected_item_index)
-        self.color_g2_combo_btn.setCurrentText(self.signals_data_2[self.selected_item_index][2])
+        selected_item_index = self.g_2_signals_combo_box.currentIndex()
+        if not self.signals_data_2 or self.g_2_signals_combo_box.currentIndex() <= 0:
+            self.color_g2_combo_btn.setCurrentIndex(selected_item_index)
+            self.line_edit_g2.clear()
+            self.show_g2_check_btn.setChecked(False)
+        else:
 
-        self.line_edit_g2.setText(self.signals_data_2[self.selected_item_index][3])
-        self.show_g2_check_btn.setChecked(self.signals_data_2[self.selected_item_index][4])
+            self.color_g2_combo_btn.setCurrentText(self.signals_data_2[selected_item_index][2])
+            self.line_edit_g2.setText(self.signals_data_2[selected_item_index][3])
+            self.show_g2_check_btn.setChecked(self.signals_data_2[selected_item_index][4])
 
     def show_hide_signal_g_1(self):
+        if not self.signals_data_1 or self.g_1_signals_combo_box.currentIndex() <= 0:
+            return
+        selected_item_index = self.g_1_signals_combo_box.currentIndex()
         checkbox_checked = self.show_g1_check_btn.isChecked()
-        self.signals_data_1[self.selected_item_index][4] = checkbox_checked
+        self.signals_data_1[selected_item_index][4] = checkbox_checked
         self.flag_1 = True
 
     def show_hide_signal_g_2(self):
+        if not self.signals_data_2 or self.g_2_signals_combo_box.currentIndex() <= 0:
+            return
+        selected_item_index = self.g_2_signals_combo_box.currentIndex()
         checkbox_checked = self.show_g2_check_btn.isChecked()
-        self.signals_data_[self.selected_item_index][4] = checkbox_checked
+        self.signals_data_2[selected_item_index][4] = checkbox_checked
         self.flag_2 = True
 
 
     #A function that update the data of the signal whenever the user change the data and press on save button
     def save_changes_g1(self):
+        if not self.signals_data_1:
+            return
+        selected_item_index = self.g_1_signals_combo_box.currentIndex()
         label_text = self.line_edit_g1.text()
         # Get the selected color from the ComboBox
         selected_color = self.color_g1_combo_btn.currentText()
-        self.signals_data_1[self.selected_item_index][2] = selected_color
-        self.signals_data_1[self.selected_item_index][3] = label_text
+        self.signals_data_1[selected_item_index][2] = selected_color
+        self.signals_data_1[selected_item_index][3] = label_text
         self.flag_1 = True
 
-
     def save_changes_g2(self):
+        if not self.signals_data_2:
+            return
+        selected_item_index = self.g_2_signals_combo_box.currentIndex()
         label_text = self.line_edit_g2.text()
         # Get the selected color from the ComboBox
         selected_color = self.color_g2_combo_btn.currentText()
-        self.signals_data_2[self.selected_item_index][2] = selected_color
-        self.signals_data_2[self.selected_item_index][3] = label_text
+        self.signals_data_2[selected_item_index][2] = selected_color
+        self.signals_data_2[selected_item_index][3] = label_text
         self.flag_2 = True
+
+    def reindex_dict_keys(self, dictionary):
+        return {i: value for i, (key, value) in enumerate(dictionary.items(), start=1)}
+
+    def refill_combo_from_dict(self, combo_box, dictionary):
+        combo_box.clear()  # Clear the combo box
+        combo_box.addItem("Select a Signal")
+
+        # Add items from the dictionary to the combo box
+        for key in dictionary:
+            combo_box.addItem(f"{'Signal'} - {key}")
+
+    def delete_signal_g_1(self):
+        if not self.signals_data_1:
+            return  # No items in the dictionary to delete
+        selected_item_index = self.g_1_signals_combo_box.currentIndex()
+        del self.signals_data_1[selected_item_index]
+        self.count_signals_1 -= 1
+        self.timer_1.stop()
+        self.graphicsView_1.clear()
+        self.end_indx_1 = 50
+        self.start_1 = 0
+        self.end_1 = 0.154
+        # Reindex the dictionary keys
+        self.signals_data_1 = self.reindex_dict_keys(self.signals_data_1)
+        self.refill_combo_from_dict(self.g_1_signals_combo_box, self.signals_data_1)
+        self.Handle_graph_1(self.signals_data_1)
+        self.loaddata()
+        self.g_1_delete = True
+
+    def delete_signal_g_2(self):
+        if not self.signals_data_2:
+            return  # No items in the dictionary to delete
+        selected_item_index = self.g_2_signals_combo_box.currentIndex()
+        del self.signals_data_2[selected_item_index]
+        self.count_signals_2 -= 1
+        self.timer_2.stop()
+        self.graphicsView_2.clear()
+        self.end_indx_2 = 50
+        self.start_2 = 0
+        self.end_2 = 0.154
+        # Reindex the dictionary keys
+        self.signals_data_2 = self.reindex_dict_keys(self.signals_data_2)
+        self.refill_combo_from_dict(self.g_2_signals_combo_box, self.signals_data_2)
+        self.Handle_graph_2(self.signals_data_2)
+        self.loaddata()
+
+    def move_signal_g_1(self):
+        if not self.signals_data_1:
+            return
+        selected_item_index = self.g_1_signals_combo_box.currentIndex()
+        self.count_signals_2 += 1
+        self.signals_data_2[self.count_signals_2] = [self.signals_data_1[selected_item_index][0], self.signals_data_1[selected_item_index][1], 'Red',
+                                                     f"{'Signal'} - {self.count_signals_2}",
+                                                     True, self.signals_data_1[selected_item_index][5]]
+        self.g_2_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_2}")
+        self.delete_signal_g_1()
+        self.graph_1_active = True
+        self.graph_2_active = True
+        self.rewind_graph()
+        self.graph_1_active = self.graph1_radio_btn.isChecked()
+        self.graph_2_active = self.graph2_radio_btn.isChecked()
+        self.loaddata()
+
+    def move_signal_g_2(self):
+        if not self.signals_data_2:
+            return
+        selected_item_index = self.g_2_signals_combo_box.currentIndex()
+        self.count_signals_1 += 1
+        self.signals_data_1[self.count_signals_1] = [self.signals_data_2[selected_item_index][0],
+                                                     self.signals_data_2[selected_item_index][1], 'Red',
+                                                     f"{'Signal'} - {self.count_signals_1}",
+                                                     True, self.signals_data_2[selected_item_index][5]]
+        self.g_1_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_1}")
+        self.delete_signal_g_2()
+        self.graph_1_active = True
+        self.graph_2_active = True
+        self.rewind_graph()
+        self.graph_1_active = self.graph1_radio_btn.isChecked()
+        self.graph_2_active = self.graph2_radio_btn.isChecked()
+        self.loaddata()
 
     def capture_and_create_pdf(self):
         # Prompt the user to choose the destination directory and file name
@@ -648,6 +752,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.pdf_content.append(title_table)
 
     def save_snap_shot(self):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
         if self.graph_1_active:
             self.save_graph_snapshot(self.graphicsView_1, "Graph 1")
         if self.graph_2_active:
@@ -701,45 +807,33 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         ]))
 
     def graph1_selected(self):
-
         self.graph_1_active = True
         self.graph_2_active = False
 
     def graph2_selected(self):
-
         self.graph_1_active = False
         self.graph_2_active = True
 
     def link_selected(self):
-
         self.graph_1_active = True
         self.graph_2_active = True
 
-    def speed_changed(self):
-        speed_mapping = {
-            "x1": 50,
-            "x1.25": 40,
-            "x1.5": 33,
-            "x2": 25
-        }
-
-        if self.current_speed_index == 3:
-            self.current_speed_index = 0
-        else:
-            self.current_speed_index += 1
-
-        speed_text = self.speeds[self.current_speed_index]
-        self.speed_push_btn.setText(speed_text)
-
+    # A function to select the speed of the graph
+    def on_combobox_speed_selection(self):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
+        speed_list = [50, 40, 33, 25]
+        speed_index = self.speed_selection.currentIndex() - 1
         if self.graph_1_active:
-            self.timer_1.setInterval(speed_mapping[speed_text])
+            self.timer_1.setInterval(speed_list[speed_index])
 
         if self.graph_2_active:
-            self.timer_2.setInterval(speed_mapping[speed_text])
+            self.timer_2.setInterval(speed_list[speed_index])
 
-        # A function that triggers between play and pause to control the flow of signals on graph
-
+ # A function that triggers between play and pause to control the flow of signals on graph
     def play_pause(self):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
         if self.graph_1_active:
             self.is_playing_g_1 = not self.is_playing_g_1
             if self.is_playing_g_1:
@@ -764,14 +858,18 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.timer_2.stop()
 
     def clear_graph(self):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
         if self.graph_1_active:
-            self.timer_1.stop()
+            if not self.signals_data_1:
+                self.timer_1.stop()
             self.graphicsView_1.clear()
             self.end_indx_1 = 50
             self.start_1 = 0
             self.end_1 = 0.154
         if self.graph_2_active:
-            self.timer_2.stop()
+            if not self.signals_data_2:
+                 self.timer_2.stop()
             self.graphicsView_2.clear()
             self.end_indx_2 = 50
             self.start_2 = 0
@@ -792,6 +890,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         graphicsView.getViewBox().setRange(xRange=[new_x_min, new_x_max], yRange=[new_y_min, new_y_max])
 
     def zoom_out(self):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
         if self.graph_1_active:
             if self.zoom_count_graph1 > -3:
                 self.zoom(self.graphicsView_1, 0.5)
@@ -802,6 +902,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.zoom_count_graph2 -= 1
 
     def zoom_in(self):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
         if self.graph_1_active:
             if self.zoom_count_graph1 < 5:  # Set your desired limit
                 self.zoom(self.graphicsView_1, 1.3)
@@ -811,6 +913,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.zoom(self.graphicsView_2, 1.3)
                 self.zoom_count_graph2 += 1
     def rewind_graph(self):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
         if self.graph_1_active:
             # Clear Graph for graph 1
             self.clear_graph()
@@ -828,6 +932,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.Handle_graph_2(self.signals_data_2)
 
     def onSliderValueChanged_y(self, value):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
         y_range_offset = 0.07 * value
         if self.graph_1_active:
             self.graphicsView_1.setYRange(-self.max_y_1 + y_range_offset, self.max_y_1 + y_range_offset)
@@ -835,6 +941,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.graphicsView_2.setYRange(-self.max_y_2 + y_range_offset, self.max_y_2 + y_range_offset)
 
     def onSliderValueChanged_x(self, value):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
         x_range_offset = 0.0007 * value
         if self.graph_1_active:
             if self.end_indx_1 <= 500:
@@ -850,6 +958,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def loaddata(self):
         # Clear the table
         self.tableWidget.clear()
+
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
 
         # Define a list of statistic names
         statistic_names = ["Statistic", "Mean", "Std", "Duration", "Min", "Max"]

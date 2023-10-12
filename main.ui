@@ -41,7 +41,7 @@ color: rgba(0, 0, 0, 0.50);
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2">
+   <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0" rowspan="2">
@@ -77,22 +77,6 @@ color: rgba(0, 0, 0, 0.50);
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="speed_push_btn">
-        <property name="styleSheet">
-         <string notr="true">QPushButton {background-color:white;}
-
-::hover {
-    background-color: rgb(238, 238, 238); 
-    
-    color:#444; 
-}</string>
-        </property>
-        <property name="text">
-         <string>x1</string>
-        </property>
-       </widget>
       </item>
       <item row="0" column="2">
        <widget class="QPushButton" name="clear_push_btn">
@@ -274,9 +258,43 @@ color: rgba(0, 0, 0, 0.50);
         </property>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="speed_selection">
+        <item>
+         <property name="text">
+          <string>Speed</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>x1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>x1.25</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>x1.5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>x1.75</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>x2</string>
+         </property>
+        </item>
+       </widget>
+      </item>
      </layout>
     </item>
-    <item row="0" column="1" colspan="2">
+    <item row="0" column="1">
      <widget class="QTableWidget" name="tableWidget">
       <property name="minimumSize">
        <size>
@@ -350,7 +368,7 @@ color: rgba(0, 0, 0, 0.50);
       </row>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="1" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="PlotWidget" name="graphicsView_1">
@@ -382,11 +400,11 @@ color: rgba(0, 0, 0, 0.50);</string>
       </item>
      </layout>
     </item>
-    <item row="1" column="2">
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item row="1" column="1">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item alignment="Qt::AlignLeft">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0" colspan="2">
          <widget class="QComboBox" name="g_1_signals_combo_box">
           <property name="minimumSize">
            <size>
@@ -401,7 +419,73 @@ color: rgba(0, 0, 0, 0.50);</string>
           </item>
          </widget>
         </item>
-        <item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="delete_g1_btn">
+          <property name="styleSheet">
+           <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+          </property>
+          <property name="text">
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="show_g1_check_btn">
+          <property name="text">
+           <string>Show Signal</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="2">
+         <widget class="QPushButton" name="move_g1_btn">
+          <property name="styleSheet">
+           <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+          </property>
+          <property name="text">
+           <string>Move to graph 2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="3">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Label</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="line_edit_g1"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="save_lbl_g1_btn">
+            <property name="styleSheet">
+             <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0" colspan="3">
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
            <widget class="QLabel" name="color_lbl">
@@ -436,44 +520,6 @@ color: rgba(0, 0, 0, 0.50);</string>
           </item>
          </layout>
         </item>
-        <item>
-         <widget class="QCheckBox" name="show_g1_check_btn">
-          <property name="text">
-           <string>Show Signal</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Label</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="line_edit_g1"/>
-          </item>
-          <item>
-           <widget class="QPushButton" name="save_lbl_g1_btn">
-            <property name="styleSheet">
-             <string notr="true">::hover {
-    background-color: rgb(238, 238, 238); 
-    
-    color: black; 
-}</string>
-            </property>
-            <property name="text">
-             <string>Save</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
        </layout>
       </item>
       <item>
@@ -493,8 +539,8 @@ color: rgba(0, 0, 0, 0.50);</string>
        </spacer>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item alignment="Qt::AlignLeft">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
          <widget class="QComboBox" name="g_2_signals_combo_box">
           <property name="minimumSize">
            <size>
@@ -509,7 +555,73 @@ color: rgba(0, 0, 0, 0.50);</string>
           </item>
          </widget>
         </item>
-        <item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="delete_g2_btn">
+          <property name="styleSheet">
+           <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+          </property>
+          <property name="text">
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Label</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="line_edit_g2"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="save_lbl_g2_btn">
+            <property name="styleSheet">
+             <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="show_g2_check_btn">
+          <property name="text">
+           <string>Show Signal</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="move_g2_btn">
+          <property name="styleSheet">
+           <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+          </property>
+          <property name="text">
+           <string>Move to graph 1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
            <widget class="QLabel" name="color_lbl_2">
@@ -540,44 +652,6 @@ color: rgba(0, 0, 0, 0.50);</string>
               <string>Green</string>
              </property>
             </item>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="show_g2_check_btn">
-          <property name="text">
-           <string>Show Signal</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Label</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="line_edit_g2"/>
-          </item>
-          <item>
-           <widget class="QPushButton" name="save_lbl_g2_btn">
-            <property name="styleSheet">
-             <string notr="true">::hover {
-    background-color: rgb(238, 238, 238); 
-    
-    color: black; 
-}</string>
-            </property>
-            <property name="text">
-             <string>Save</string>
-            </property>
            </widget>
           </item>
          </layout>
