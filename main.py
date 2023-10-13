@@ -89,7 +89,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.title_pdf()
         self.zoom_count_graph1 = 0  # Initialize zoom count for graph 1
         self.zoom_count_graph2 = 0  # Initialize zoom count for graph 2
-        self.g_1_delete = False
     
 
 
@@ -551,7 +550,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.refill_combo_from_dict(self.g_1_signals_combo_box, self.signals_data_1)
         self.Handle_graph_1(self.signals_data_1)
         self.loaddata()
-        self.g_1_delete = True
 
     def delete_signal_g_2(self):
         if not self.signals_data_2:
@@ -755,14 +753,19 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     def save_snap_shot(self):
         if not self.signals_data_1 and not self.signals_data_2:
+            self.show_message("Graphs are empty")
             return
-        if self.graph_1_active:
-            self.save_graph_snapshot(self.graphicsView_1, "Graph 1")
-        if self.graph_2_active:
-            self.save_graph_snapshot(self.graphicsView_2, "Graph 2")
         if self.graph_1_active and self.graph_2_active:
+            self.show_message("SnapShot taken for both Graphs")
             self.save_graph_snapshot(self.graphicsView_1, "Graph 1 & Graph 2")
             self.save_graph_snapshot(self.graphicsView_2, "Graph 1 & Graph 2")
+            return
+        if self.graph_1_active:
+            self.show_message("SnapShot taken for Graph 1")
+            self.save_graph_snapshot(self.graphicsView_1, "Graph 1")
+        if self.graph_2_active:
+            self.show_message("SnapShot taken for Graph 2")
+            self.save_graph_snapshot(self.graphicsView_2, "Graph 2")
 
     def save_graph_snapshot(self, graphics_view, title):
         self.pdf_content.append(Table([[title]], style=[
@@ -1015,6 +1018,21 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                     self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{min_value:.2f}"))
                 elif stat_name == "Max":
                     self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{max_value:.2f}"))
+
+    def show_message(self, text, timeout=3000):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setText(text)
+        msgBox.setWindowTitle("Signal Viewer")
+
+        # Set up a timer to close the message box after the specified timeout (in milliseconds)
+        timer = QtCore.QTimer()
+        timer.setSingleShot(True)
+        timer.timeout.connect(msgBox.accept)
+        timer.start(timeout)
+
+        # Show the message box
+        msgBox.exec()
 
 
 def main():  # method to start app
