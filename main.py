@@ -31,6 +31,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         QMainWindow.__init__(self)
         num_tabs = 1
         self.setupUi(self)
+        self.setGeometry(0, 0, 1300, 700)  # Set your desired window size
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
+        self.center_on_screen()
         self.Handle_btn()
         self.shortcuts()
         self.move_y_slider.setMinimum(-50) 
@@ -89,9 +92,20 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.title_pdf()
         self.zoom_count_graph1 = 0  # Initialize zoom count for graph 1
         self.zoom_count_graph2 = 0  # Initialize zoom count for graph 2
-    
 
+    def center_on_screen(self):
+        # Calculate the center coordinates for a 1920x1080 screen
+        screen_width = 1920
+        screen_height = 1080
 
+        window_width = self.frameGeometry().width()
+        window_height = self.frameGeometry().height()
+
+        x = (screen_width - window_width) // 2
+        y = (screen_height - window_height) // 2
+
+        # Set the window's position to the center
+        self.move(x, y)
     def max_range_1 (self):
         for value in self.signals_data_1.values():
             #print(value[1])
