@@ -577,7 +577,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                                                      f"{'Signal'} - {self.count_signals_2}",
                                                      True, self.signals_data_1[selected_item_index][5]]
         self.g_2_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_2}")
+        self.number_of_points_2 = len(self.signals_data_1[selected_item_index][0])
         self.delete_signal_g_1()
+        
         self.graph_1_active = True
         self.graph_2_active = True
         self.rewind_graph()
@@ -595,6 +597,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                                                      f"{'Signal'} - {self.count_signals_1}",
                                                      True, self.signals_data_2[selected_item_index][5]]
         self.g_1_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_1}")
+        self.number_of_points_1 = len(self.signals_data_2[selected_item_index][0])
         self.delete_signal_g_2()
         self.graph_1_active = True
         self.graph_2_active = True
