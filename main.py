@@ -125,7 +125,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.zoom_out_push_btn.clicked.connect(self.zoom_out)
         self.zoom_in_push_btn.clicked.connect(self.zoom_in)
         self.rewind_push_btn.clicked.connect(self.rewind_graph)
-        self.clear_push_btn.clicked.connect(self.clear_and_initialize)
+        self.clear_push_btn.clicked.connect(self.clear_graph)
         self.snap_shot_btn.clicked.connect(self.save_snap_shot)
         self.g_1_signals_combo_box.currentIndexChanged.connect(self.on_combobox_g_1_selection)
         self.g_2_signals_combo_box.currentIndexChanged.connect(self.on_combobox_g_2_selection)
@@ -137,17 +137,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.show_g2_check_btn.stateChanged.connect(self.show_hide_signal_g_2)
         self.move_g1_btn.clicked.connect(self.move_signal_g_1)
         self.move_g2_btn.clicked.connect(self.move_signal_g_2)
-    def clear_and_initialize(self):
-        self.clear_graph()
-        self.initialize()
-    def initialize(self):
-        if not self.signals_data_1 and not self.signals_data_2:
-            return
-        if self.graph_1_active:
-           self.signals_data_1 = {}
-            #self.signals_data_1 = {}
-        if self.graph_2_active:
-          self.signals_data_2 = {}
+
+
     # A Function  that defines some shortcuts to make the work with our app more easier
     def shortcuts(self):
         # defining shortcuts
@@ -410,7 +401,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def add_signal_to_graph_2(self):
             options = QFileDialog.Options()
             options |= QFileDialog.ReadOnly
-            file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)",
+            file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "","CSV Files (*.csv);;All Files (*)",
                                                        options=options)
             if file_path:
                 self.count_signals_2 += 1
@@ -940,8 +931,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.tableWidget.clear()
         if not self.signals_data_1 and not self.signals_data_2:
             return
+
         # Define a list of statistic names
         statistic_names = ["Statistic", "Mean", "Std", "Duration", "Min", "Max"]
+
         # Create a dictionary to map signal indices to signal information
         signal_index_info_map = {}
 
@@ -952,9 +945,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # Loop through each signal in graph 2 and populate the signal_index_info_map
         for signal_index, signal_info in self.signals_data_2.items():
             signal_index_info_map[signal_index + len(self.signals_data_1)] = ("Graph 2 " + signal_info[3], signal_info)
-      
+
         num_signals = len(signal_index_info_map)
         num_stats = 5  # There are 5 statistics for each signal
+
         self.tableWidget.setRowCount(num_signals + 1)  # Signals rows (+1 for the statistic names)
         self.tableWidget.setColumnCount(num_stats + 1)  # Statistics columns (+1 for signal labels)
 
@@ -987,6 +981,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                     self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{min_value:.2f}"))
                 elif stat_name == "Max":
                     self.tableWidget.setItem(signal_index, col + 1, QTableWidgetItem(f"{max_value:.2f}"))
+
+        # Set resizing mode to make the cells occupy the full width of the table
+        for col in range(self.tableWidget.columnCount()):
+            self.tableWidget.horizontalHeader().setSectionResizeMode(col, QHeaderView.Stretch)
 
     # A function to set the window title
     def show_message(self, text, timeout=3000):
