@@ -96,6 +96,18 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # Set the window's position to the center
         self.move(x, y)
 
+
+    def show_popup(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("All data points has been shown.Click OK below to rewind")
+        msg.setWindowTitle("Popup Message Box")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        ok_button = msg.button(QMessageBox.Ok)
+        ok_button.clicked.connect(self.rewind_graph)
+
+        result = msg.exec_()    
+
     # A function that connects the the ui elements to function to handle them
     def handle_btn(self):
         # menu buttons
@@ -113,7 +125,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.zoom_out_push_btn.clicked.connect(self.zoom_out)
         self.zoom_in_push_btn.clicked.connect(self.zoom_in)
         self.rewind_push_btn.clicked.connect(self.rewind_graph)
-        self.clear_push_btn.clicked.connect(self.clear_graph)
+        self.clear_push_btn.clicked.connect(self.clear_and_initialize)
         self.snap_shot_btn.clicked.connect(self.save_snap_shot)
         self.g_1_signals_combo_box.currentIndexChanged.connect(self.on_combobox_g_1_selection)
         self.g_2_signals_combo_box.currentIndexChanged.connect(self.on_combobox_g_2_selection)
@@ -125,7 +137,17 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.show_g2_check_btn.stateChanged.connect(self.show_hide_signal_g_2)
         self.move_g1_btn.clicked.connect(self.move_signal_g_1)
         self.move_g2_btn.clicked.connect(self.move_signal_g_2)
-
+    def clear_and_initialize(self):
+        self.clear_graph()
+        self.initialize()
+    def initialize(self):
+        if not self.signals_data_1 and not self.signals_data_2:
+            return
+        if self.graph_1_active:
+           self.signals_data_1 = {}
+            #self.signals_data_1 = {}
+        if self.graph_2_active:
+          self.signals_data_2 = {}
     # A Function  that defines some shortcuts to make the work with our app more easier
     def shortcuts(self):
         # defining shortcuts
@@ -249,8 +271,15 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         else:
             if(self.end_indx_1 > 500):
                 self.graphicsView_1.setXRange(self.start_1, self.end_1)
-        if(self.end_indx_1 == self.number_of_points_1):
+        if(self.end_indx_1 >= self.number_of_points_1):
               self.timer_1.stop()
+              current_g_1 = self.graph_1_active
+              current_g_2 = self.graph_2_active
+              self.graph_1_active = True
+              self.graph_2_active = False
+              self.show_popup()
+              self.graph_1_active = current_g_1
+              self.graph_2_active = current_g_2
         for i,data_line in enumerate(self.data_lines_1):
             if(self.start_flag_1 == False and i > 0):
                     graph_1_act = self.graph_1_active
@@ -315,9 +344,16 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         else:
             if (self.end_indx_2 > 500):
                 self.graphicsView_2.setXRange(self.start_2, self.end_2)
-
-        if (self.end_indx_2 == self.number_of_points_2):
+        
+        if (self.end_indx_2 >= self.number_of_points_2):
             self.timer_2.stop()
+            current_g_1 = self.graph_1_active
+            current_g_2 = self.graph_2_active
+            self.graph_1_active = False
+            self.graph_2_active = True
+            self.show_popup()
+            self.graph_1_active = current_g_1
+            self.graph_2_active = current_g_2
 
         for i, data_line in enumerate(self.data_lines_2):
             if(self.start_flag_2 == False and i > 0):
@@ -893,10 +929,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             else:
                 self.graphicsView_1.setXRange(self.start_1 + x_range_offset, self.end_1 + x_range_offset)
         if self.graph_2_active:
-            if self.end_indx_1 <= 500:
+            if self.end_indx_2 <= 500:
                 self.graphicsView_2.setXRange(0 + x_range_offset, 0.154 + x_range_offset)
             else:
-                self.graphicsView_2.setXRange(self.start_1 + x_range_offset, self.end_1 + x_range_offset)
+                self.graphicsView_2.setXRange(self.start_2 + x_range_offset, self.end_2 + x_range_offset)
 
     # A function to load the data of the signals in the table
     def load_data(self):
