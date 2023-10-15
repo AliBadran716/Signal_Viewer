@@ -56,6 +56,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.is_playing_g_1 = True
         self.is_playing_g_2 = True
         # Initialization of the min and max values of x-axis and y-axis
+        self.first_element_of_time = 0
         self.max_y_1 = 0
         self.max_y_2 = 0
         self.max_x_1 = 0
@@ -69,8 +70,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.end_indx_2 = 50
         self.start_1 = 0 # Sets the start of the x range
         self.start_2 = 0
-        self.end_1 = 0.154 # Sets the end of the x range
-        self.end_2 = 0.154
+        self.end_1 = 616 * self.first_element_of_time # Sets the end of the x range
+        self.end_2 = 616 * self.first_element_of_time
         self.load_data()
         self.hide_signals = []
         self.number_of_points_1 = 0 
@@ -167,6 +168,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.sc_zoom_in.activated.connect(self.zoom_in)
         self.sc_zoom_out.activated.connect(self.zoom_out)
         self.sc_rewind.activated.connect(self.rewind_graph)
+        
 
     # A function that detects the max y-value of all the signals in graph 1 
     def max_range_1 (self):
@@ -229,7 +231,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graphicsView_1.setObjectName("graphicsView_1")
         self.data_lines_1 = []
         self.file_names_1 = []
-        self.graphicsView_1.setXRange(0, 0.154)
+        self.graphicsView_1.setXRange(0, 616 * self.first_element_of_time)
         for value in signals_data_1.values():
             self.file_names_1.append( value[5]) 
         for i,file_name in enumerate(self.file_names_1):
@@ -243,6 +245,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
            self.data_lines_1.append(data_line)
         if not self.signals_data_1:
             return
+        self.end_1 = 616 * self.first_element_of_time # Sets the end of the x range
+       
         self.timer_1 = QtCore.QTimer()
         self.timer_1.setInterval(50)
         self.timer_1.timeout.connect(self.update_plot_data_1)
@@ -252,15 +256,17 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     # A function that updates the data being plotted on graph 1
     def update_plot_data_1(self  ):
-        step_in_x = 9 * 0.00025
+        step_in_x = 9 * self.first_element_of_time
         self.end_indx_1+=9
-        if(self.end_indx_1>=400 and self.end_indx_1<self.number_of_points_1):
+        if(self.end_indx_1>=616 and self.end_indx_1<self.number_of_points_1):
             self.start_1 = self.start_1 + step_in_x
+            
             self.end_1 = self.end_1 + step_in_x
-        if (self.end_indx_1 <= 500 ):
-                self.graphicsView_1.setXRange(0, 0.154)
+            
+        if (self.end_indx_1 <= 616 ):
+                self.graphicsView_1.setXRange(0, 616 * self.first_element_of_time)
         else:
-            if(self.end_indx_1 > 500):
+            if(self.end_indx_1 > 616):
                 self.graphicsView_1.setXRange(self.start_1, self.end_1)
         if(self.end_indx_1 >= self.number_of_points_1):
               self.timer_1.stop()
@@ -298,7 +304,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graphicsView_2.setObjectName("graphicsView_2")
         self.data_lines_2 = []
         self.file_names_2 = []
-        self.graphicsView_2.setXRange(0, 0.154)
+        self.graphicsView_2.setXRange(0, 616 * self.first_element_of_time)
 
         for value in signals_data_2.values():
             self.file_names_2.append(value[5])
@@ -315,6 +321,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
         if not self.signals_data_2:
             return
+        self.end_2 = 616 * self.first_element_of_time
         self.timer_2 = QtCore.QTimer()
         self.timer_2.setInterval(50)
         self.timer_2.timeout.connect(self.update_plot_data_2)
@@ -324,16 +331,17 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     # A function that updates the data being plotted on graph 2
     def update_plot_data_2(self):
-        step_in_x = 9 * 0.00025
+        step_in_x = 9 * self.first_element_of_time
+        
         self.end_indx_2 += 9
-        if (self.end_indx_2 >= 400 and self.end_indx_2 < self.number_of_points_2):
+        if (self.end_indx_2 >= 616 and self.end_indx_2 < self.number_of_points_2):
             self.start_2 = self.start_2 + step_in_x
             self.end_2 = self.end_2 + step_in_x
-       
-        if (self.end_indx_2 <= 500):
-            self.graphicsView_2.setXRange(0, 0.154)
+            
+        if (self.end_indx_2 <= 616):
+            self.graphicsView_2.setXRange(0, 616 * self.first_element_of_time)
         else:
-            if (self.end_indx_2 > 500):
+            if (self.end_indx_2 > 616):
                 self.graphicsView_2.setXRange(self.start_2, self.end_2)
         
         if (self.end_indx_2 >= self.number_of_points_2):
@@ -383,6 +391,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             values_column = signal_data.iloc[:, 1]
             time_values = time_column.tolist()
             v_values = values_column.tolist()
+            self.first_element_of_time = time_values[1]-time_values[0] 
+            
 
             if(self.terminal_flag_1 == False):
                 self.max_x_1 = max(time_values)
@@ -412,6 +422,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 values_column = signal_data.iloc[:, 1]
                 time_values = time_column.tolist()
                 v_values = values_column.tolist()
+                self.first_element_of_time = time_values[1]-time_values[0] 
 
                 if(self.terminal_flag_2 == False):
                     self.max_x_2 = max(time_values)
@@ -518,7 +529,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graphicsView_1.clear()
         self.end_indx_1 = 50
         self.start_1 = 0
-        self.end_1 = 0.154
+        self.end_1 = 616 * self.first_element_of_time
         # Reindex the dictionary keys
         self.signals_data_1 = self.reindex_dict_keys(self.signals_data_1)
         self.refill_combo_from_dict(self.g_1_signals_combo_box, self.signals_data_1)
