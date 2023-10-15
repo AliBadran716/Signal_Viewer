@@ -28,7 +28,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.setGeometry(0, 0, 1300, 700)  # Initialization for the UI
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
         self.center_on_screen()
         self.handle_btn()
         self.shortcuts()
@@ -39,9 +38,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # [[x_values], [y_values], [color_of signal], label_of_signal, is_hide, file_name]
         self.signals_data_1 = {}
         self.signals_data_2 = {}
-        self.file_names_1 = [] # A list to contain the file names being uploaded
+        self.file_names_1 = []  # A list to contain the file names being uploaded
         self.file_names_2 = []
-        #self.colors = [] # A list to contain the colors of the signals
+        # A list to contain the colors of the signals
         self.graphicsView_1.setLabel('bottom', 'time')
         self.graphicsView_2.setLabel('bottom', 'time')
         # Initialization of the ranges of the sliders
@@ -51,7 +50,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.move_x_slider.setMinimum(-50) 
         self.move_x_slider.setMaximum(50)   
         self.move_x_slider.setSliderPosition(0)
-        self.graph_1_active = True # Setting graph 1 active initially
+        self.graph_1_active = True  # Setting graph 1 active initially
         self.graph_2_active = False
         self.is_playing_g_1 = True
         self.is_playing_g_2 = True
@@ -61,31 +60,31 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.max_y_2 = 0
         self.max_x_1 = 0
         self.max_x_2 = 0
-        self.count_signals_1 = 0 # Setting the counter of the signals initially by zero
+        self.count_signals_1 = 0  # Setting the counter of the signals initially by zero
         self.count_signals_2 = 0
         self.snapshot_counter = 0
         self.zoom_count_graph1 = 0  # Initialize zoom count for graph 1
         self.zoom_count_graph2 = 0  # Initialize zoom count for graph 2
-        self.end_indx_1 = 50 # Tracks the last index plotted from the signal
+        self.end_indx_1 = 50  # Tracks the last index plotted from the signal
         self.end_indx_2 = 50
-        self.start_1 = 0 # Sets the start of the x range
+        self.start_1 = 0  # Sets the start of the x range
         self.start_2 = 0
-        self.end_1 = 616 * self.first_element_of_time # Sets the end of the x range
+        self.end_1 = 616 * self.first_element_of_time  # Sets the end of the x range
         self.end_2 = 616 * self.first_element_of_time
         self.load_data()
-        self.hide_signals = []
+        self.show_signals = []
         self.number_of_points_1 = 0 
         self.number_of_points_2 = 0
-        self.start_flag_1 = False # Determines whether a new signal ia added or not
+        self.start_flag_1 = False  # Determines whether a new signal ia added or not
         self.start_flag_2 = False
-        self.terminal_flag_1 = False # Determines the max value at which the plotting will terminate
+        self.terminal_flag_1 = False  # Determines the max value at which the plotting will terminate
         self.terminal_flag_2 = False
-        # Hnalding the pdf data 
+        # Hanlding the pdf data
         self.pdf_content = []
         self.title_pdf()
-        self.snapshot_path=''
+        self.snapshot_path = ''
 
-    # A function that cenetrs the the screen   
+    # A function that centers the screen
     def center_on_screen(self):
         # Calculate the center coordinates for a 1920x1080 screen
         screen_width = 1920
@@ -97,19 +96,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # Set the window's position to the center
         self.move(x, y)
 
-
-    def show_popup(self):
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Information)
-        msg.setText("All data points has been shown.Click OK below to rewind")
-        msg.setWindowTitle("Popup Message Box")
-        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        ok_button = msg.button(QMessageBox.Ok)
-        ok_button.clicked.connect(self.rewind_graph)
-
-        result = msg.exec_()    
-
-    # A function that connects the the ui elements to function to handle them
+    # A function that connects the ui elements to function to handle them
     def handle_btn(self):
         # menu buttons
         self.add_to_graph_1_btn.triggered.connect(self.add_signal_to_graph_1)
@@ -209,21 +196,21 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     # A function to determine the visibility of each signal based on the checkbox value in graph 1
     def show_hide_1(self, signals_data_1):
-        self.hide_signals= []
+        self.show_signals= []
         for value in signals_data_1.values():
             if(value[4] == True):
-                self.hide_signals.append(True)
+                self.show_signals.append(True)
             else :
-                self.hide_signals.append(False)
+                self.show_signals.append(False)
 
     # A function to determine the visibility of each signal based on the checkbox value in graph 1
     def show_hide_2(self, signals_data_1):
-        self.hide_signals= []
+        self.show_signals= []
         for value in signals_data_1.values():
             if(value[4] == True):
-                self.hide_signals.append(True)
+                self.show_signals.append(True)
             else :
-                self.hide_signals.append(False)
+                self.show_signals.append(False)
 
     # A funbction that initilaizes graph 1 
     def handle_graph_1(self , signals_data_1 ):
@@ -270,13 +257,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.graphicsView_1.setXRange(self.start_1, self.end_1)
         if(self.end_indx_1 >= self.number_of_points_1):
               self.timer_1.stop()
-              current_g_1 = self.graph_1_active
-              current_g_2 = self.graph_2_active
-              self.graph_1_active = True
-              self.graph_2_active = False
-              self.show_popup()
-              self.graph_1_active = current_g_1
-              self.graph_2_active = current_g_2
         for i,data_line in enumerate(self.data_lines_1):
             if(self.start_flag_1 == False and i > 0):
                     graph_1_act = self.graph_1_active
@@ -296,7 +276,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.color_detect_1(self.signals_data_1)
             data_line.setPen(self.colors[i])
             self.show_hide_1(self.signals_data_1)
-            data_line.setVisible(self.hide_signals[i])
+            data_line.setVisible(self.show_signals[i])
 
      # A funbction that initilaizes graph 2
     def handle_graph_2(self, signals_data_2):
@@ -348,12 +328,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.timer_2.stop()
             current_g_1 = self.graph_1_active
             current_g_2 = self.graph_2_active
-            self.graph_1_active = False
-            self.graph_2_active = True
-            self.show_popup()
-            self.graph_1_active = current_g_1
-            self.graph_2_active = current_g_2
-
         for i, data_line in enumerate(self.data_lines_2):
             if(self.start_flag_2 == False and i > 0):
                     graph_1_act = self.graph_1_active
@@ -374,7 +348,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.color_detect_2(self.signals_data_2)
             data_line.setPen(self.colors[i])
             self.show_hide_2(self.signals_data_2)
-            data_line.setVisible(self.hide_signals[i])
+            data_line.setVisible(self.show_signals[i])
 
     # A function to let the user load the signal file, create another signal element in the dictionary, and send the file to the graph
     def add_signal_to_graph_1(self):
@@ -785,6 +759,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def link_selected(self):
         self.graph_1_active = True
         self.graph_2_active = True
+        self.rewind_graph()
 
     # A function to select the speed of the graph
     def on_combobox_speed_selection(self):
@@ -914,7 +889,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
     def onSliderValueChanged_x(self, value):
         if not self.signals_data_1 and not self.signals_data_2:
             return
-        x_range_offset = 0.0009 * value
+        x_range_offset = 0.0098 * value
         if self.graph_1_active:
             if self.end_indx_1 <= 500:
                 self.graphicsView_1.setXRange(0 + x_range_offset, 0.154 + x_range_offset)
@@ -988,7 +963,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.tableWidget.horizontalHeader().setSectionResizeMode(col, QHeaderView.Stretch)
 
     # A function to set the window title
-    def show_message(self, text, timeout=3000):
+    def show_message(self, text, timeout=1000):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setText(text)
@@ -1002,7 +977,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
         # Show the message box
         msgBox.exec()
-
 
 def main():  # method to start app
     app = QApplication(sys.argv)
