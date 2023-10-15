@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.uic import loadUiType
 import pyqtgraph as pg
 import matplotlib.pyplot as plt
@@ -96,9 +97,20 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # Set the window's position to the center
         self.move(x, y)
 
-    # A function that connects the ui elements to function to handle them
+    def on_mouse_click_1(self, event):
+        if event.button() == pg.QtCore.Qt.LeftButton:
+            self.graph_1_active = True
+            self.graph_2_active = False
+
+    def on_mouse_click_2(self, event):
+        if event.button() == pg.QtCore.Qt.LeftButton:
+            self.graph_1_active = False
+            self.graph_2_active = True
+            # A function that connects the ui elements to function to handle them
     def handle_btn(self):
         # menu buttons
+        self.graphicsView_1.scene().sigMouseClicked.connect(self.on_mouse_click_1)
+        self.graphicsView_2.scene().sigMouseClicked.connect(self.on_mouse_click_2)
         self.add_to_graph_1_btn.triggered.connect(self.add_signal_to_graph_1)
         self.add_to_graph_2_btn.triggered.connect(self.add_signal_to_graph_2)
         self.make_pdf_btn.triggered.connect(self.capture_and_create_pdf)
