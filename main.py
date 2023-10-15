@@ -101,11 +101,18 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         if event.button() == pg.QtCore.Qt.LeftButton:
             self.graph_1_active = True
             self.graph_2_active = False
+            self.graphicsView_1.setStyleSheet("border: 1px solid  rgb(0, 133, 255);;")
+            self.graphicsView_2.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20);")
+        
+
 
     def on_mouse_click_2(self, event):
         if event.button() == pg.QtCore.Qt.LeftButton:
             self.graph_1_active = False
             self.graph_2_active = True
+            self.graphicsView_2.setStyleSheet("border: 1px solid  rgb(0, 133, 255);;")
+            self.graphicsView_1.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20);")
+
             # A function that connects the ui elements to function to handle them
     def handle_btn(self):
         # menu buttons
@@ -117,8 +124,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # graph buttons
         self.move_y_slider.valueChanged.connect(self.onSliderValueChanged_y)
         self.move_x_slider.valueChanged.connect(self.onSliderValueChanged_x)
-        self.graph1_radio_btn.toggled.connect(self.graph1_selected)
-        self.graph2_radio_btn.toggled.connect(self.graph2_selected)
+        #self.graph1_radio_btn.toggled.connect(self.graph1_selected)
+        #self.graph2_radio_btn.toggled.connect(self.graph2_selected)
         self.link_radio_btn.toggled.connect(self.link_selected)
         self.speed_selection.currentIndexChanged.connect(self.on_combobox_speed_selection)
         self.play_pause_btn.clicked.connect(self.play_pause)
@@ -748,9 +755,17 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     # A function that makes both graph 1 and graph 2 selected 
     def link_selected(self):
-        self.graph_1_active = True
-        self.graph_2_active = True
-        self.rewind_graph()
+        if self.link_radio_btn.isChecked() :
+            self.graph_1_active = True
+            self.graph_2_active = True
+            self.graphicsView_1.setStyleSheet("border: 1px solid  rgb(0, 133, 255);;")
+            self.graphicsView_2.setStyleSheet("border: 1px solid  rgb(0, 133, 255);")
+            self.rewind_graph()
+        else:
+            self.graph_1_active = False
+            self.graph_2_active = False
+            self.graphicsView_1.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20)")
+            self.graphicsView_2.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20) ") 
 
     # A function to select the speed of the graph
     def on_combobox_speed_selection(self):
