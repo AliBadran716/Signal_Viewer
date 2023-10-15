@@ -624,71 +624,50 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     def add_statistics_tables(self, graph_data, graph_name):
         for signal_index, signal_info in graph_data.items():
-            time_values, signal_values, signal_color, signal_name, __, _ = signal_info
-            mean_value = np.mean(signal_values)
-            std_deviation = np.std(signal_values)
-            duration = time_values[-1] - time_values[0]
-            min_value = np.min(signal_values)
-            max_value = np.max(signal_values)
+            time_values, signal_values, signal_color, signal_name, is_hidden, _ = signal_info
 
-            # Add a title for the signal
-            signal_title = f"{graph_name} {signal_info[3]}."
-            self.pdf_content.append(Table([[signal_title]], style=[
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-            ]))
+            # Check if the signal is not hidden
+            if  is_hidden:
+                # Proceed to add the statistics table
+                mean_value = np.mean(signal_values)
+                std_deviation = np.std(signal_values)
+                duration = time_values[-1] - time_values[0]
+                min_value = np.min(signal_values)
+                max_value = np.max(signal_values)
 
-            # Add statistics to the table
-            table_data = [["Statistic", "Value"]]
-            stat_data = [
-                ["Mean", f"{mean_value:.2f}"],
-                ["Std Deviation", f"{std_deviation:.2f}"],
-                ["Duration", f"{duration:.2f}"],
-                ["Min", f"{min_value:.2f}"],
-                ["Max", f"{max_value:.2f}"],
-            ]
-            table_data.extend(stat_data)
+                # Add a title for the signal
+                signal_title = f"{graph_name} {signal_name}."
+                self.pdf_content.append(Table([[signal_title]], style=[
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+                ]))
 
-            # Create the table
-            table = Table(table_data, colWidths=[2 * inch, 2 * inch])
-            table.setStyle(TableStyle([
-                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black)
-            ]))
-            self.pdf_content.append(table)
+                # Add statistics to the table
+                table_data = [["Statistic", "Value"]]
+                stat_data = [
+                    ["Mean", f"{mean_value:.2f}"],
+                    ["Std Deviation", f"{std_deviation:.2f}"],
+                    ["Duration", f"{duration:.2f}"],
+                    ["Min", f"{min_value:.2f}"],
+                    ["Max", f"{max_value:.2f}"],
+                ]
+                table_data.extend(stat_data)
 
-    # A function that adds the table of statistcs to the pdf
-    def add_table_to_pdf(self, data, title):
-        # Add a title for the table
-        self.pdf_content.append(Table([[title]], style=[
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-        ]))
-        # Create the table
-        table = Table(data, colWidths=[2 * inch, 2 * inch])
-        table.setStyle(TableStyle([
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
-        ]))
-        # Use KeepTogether to keep title and table on the same page
-        title_table = KeepTogether([table])
-        self.pdf_content.append(title_table)
+                # Create the table
+                table = Table(table_data, colWidths=[2 * inch, 2 * inch])
+                table.setStyle(TableStyle([
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                ]))
+                self.pdf_content.append(table)
 
     # A function to save the snapshot used to make the report
     def save_snap_shot(self):
