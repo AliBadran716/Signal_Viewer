@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1320</width>
-    <height>747</height>
+    <height>724</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,8 @@ letter-spacing: 0.25px;
 
 /* 00. On Surface / High Emphasis */
 
-color: rgba(0, 0, 0, 0.50);
+/*color: rgba(0, 0, 0, 0.50);*/
+color: black;
 
 
 
@@ -252,7 +253,8 @@ color: rgba(0, 0, 0, 0.50);
          </sizepolicy>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: white;</string>
+         <string notr="true"> background-color: rgb(238, 238, 238); 
+    </string>
         </property>
         <property name="text">
          <string>Move in X</string>
@@ -281,7 +283,8 @@ color: rgba(0, 0, 0, 0.50);
          </sizepolicy>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: white;
+         <string notr="true"> background-color: rgb(238, 238, 238); 
+    
 </string>
         </property>
         <property name="text">
@@ -411,14 +414,15 @@ color: rgba(0, 0, 0, 0.50);</string>
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">::hover {
+             <string notr="true">QPushButton {background-color:white;}
+::hover {
     background-color: rgb(238, 238, 238); 
     
     color: black; 
 }</string>
             </property>
             <property name="text">
-             <string>Save</string>
+             <string>Apply</string>
             </property>
            </widget>
           </item>
@@ -488,14 +492,16 @@ color: rgba(0, 0, 0, 0.50);</string>
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">::hover {
+             <string notr="true">QPushButton {background-color:white;}
+
+::hover {
     background-color: rgb(238, 238, 238); 
     
     color: black; 
 }</string>
             </property>
             <property name="text">
-             <string>Save</string>
+             <string>Apply</string>
             </property>
            </widget>
           </item>
@@ -508,7 +514,8 @@ color: rgba(0, 0, 0, 0.50);</string>
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">::hover {
+             <string notr="true">QPushButton {background-color:white;}
+::hover {
     background-color: rgb(238, 238, 238); 
     
     color: black; 
@@ -528,7 +535,8 @@ color: rgba(0, 0, 0, 0.50);</string>
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">::hover {
+             <string notr="true">QPushButton {background-color:white;}
+::hover {
     background-color: rgb(238, 238, 238); 
     
     color: black; 
@@ -660,9 +668,11 @@ color: rgba(0, 0, 0, 0.50);</string>
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">::hover {
+             <string notr="true">QPushButton {background-color:white;}
+
+::hover {
     background-color: rgb(238, 238, 238); 
-    
+ 
     color: black; 
 }</string>
             </property>
