@@ -601,6 +601,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         file_dialog.setFileMode(QFileDialog.AnyFile)
         file_dialog.setNameFilter("PDF files (*.pdf)")
         file_dialog.setAcceptMode(QFileDialog.AcceptSave)
+
         if file_dialog.exec_():
             selected_files = file_dialog.selectedFiles()
             if selected_files:
@@ -608,98 +609,87 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 if not pdf_filename.lower().endswith(".pdf"):
                     # Ensure the file has a .pdf extension
                     pdf_filename += ".pdf"
+
                 # Create a PDF document
                 doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
-                # Add tables with statistics for all signals in graph 1
 
-                for signal_index, signal_info in self.signals_data_1.items():
-                    time_values, signal_values, signal_color, signal_name, __, _ = signal_info
-                    mean_value = np.mean(signal_values)
-                    std_deviation = np.std(signal_values)
-                    duration = time_values[-1] - time_values[0]
-                    min_value = np.min(signal_values)
-                    max_value = np.max(signal_values)
-                    # Add a title for the signal
-                    signal_name = f"Graph 1 {signal_info[3]}."
-                    self.pdf_content.append(Table([[signal_name]], style=[
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-                        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-                    ]))
-                    # Add statistics to the table
-                    table_data = [["Statistic", "Value"]]
-                    stat_data = [
-                        ["Mean", f"{mean_value:.2f}"],
-                        ["Std Deviation", f"{std_deviation:.2f}"],
-                        ["Duration", f"{duration:.2f}"],
-                        ["Min", f"{min_value:.2f}"],
-                        ["Max", f"{max_value:.2f}"],
-                    ]
-                    table_data.extend(stat_data)
-                    # Create the table
-                    table = Table(table_data, colWidths=[2 * inch, 2 * inch])
-                    table.setStyle(TableStyle([
-                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-                    ]))
-                    self.pdf_content.append(table)
+                # Title for the PDF
+                self.title_pdf()
 
-                # Add tables with statistics for all signals in graph 2
-                for signal_index, signal_info in self.signals_data_2.items():
-                    time_values, signal_values, signal_color, signal_name, __, _ = signal_info
-                    mean_value = np.mean(signal_values)
-                    std_deviation = np.std(signal_values)
-                    duration = time_values[-1] - time_values[0]
-                    min_value = np.min(signal_values)
-                    max_value = np.max(signal_values)
-                    # Add a title for the signal
-                    signal_name = f"Graph 2 {signal_info[3]}."
-                    self.pdf_content.append(Table([[signal_name]], style=[
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-                        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-                    ]))
-                    # Add statistics to the table
-                    table_data = [["Statistic", "Value"]]
-                    stat_data = [
-                        ["Mean", f"{mean_value:.2f}"],
-                        ["Std Deviation", f"{std_deviation:.2f}"],
-                        ["Duration", f"{duration:.2f}"],
-                        ["Min", f"{min_value:.2f}"],
-                        ["Max", f"{max_value:.2f}"],
-                    ]
-                    table_data.extend(stat_data)
-                    # Create the table
-                    table = Table(table_data, colWidths=[2 * inch, 2 * inch])
-                    table.setStyle(TableStyle([
-                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-                    ]))
-                    self.pdf_content.append(table)
+                # Check which graph is active and create tables accordingly
+                if self.graph_1_active and self.signals_data_1:
+                    self.add_statistics_tables(self.signals_data_1, "Graph 1")
+
+                    # Add statistics tables for Graph 2
+                if self.graph_2_active and self.signals_data_2:
+                    self.add_statistics_tables(self.signals_data_2, "Graph 2")
+
                 # Build and save the PDF document
                 doc.build(self.pdf_content)
+
                 # Delete the temporary snapshot image
                 for i in range(self.snapshot_counter):
                     self.snapshot_path = f"temp_snapshot_{i}.png"
                     os.remove(self.snapshot_path)
                 self.snapshot_counter = 0
-                # Clear PDF file
+
+                # Clear PDF content
                 self.pdf_content = []
-               
+
+    # Add this function to generate tables for a specific graph
+    def add_table_to_pdf(self, graph_data):
+        # Add a title for the table
+        self.pdf_content.append(Table([[graph_data['graph_name']]], style=[
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ]))
+
+        # Loop through the signal data and add tables for statistics
+
+    def add_statistics_tables(self, graph_data, graph_name):
+        for signal_index, signal_info in graph_data.items():
+            time_values, signal_values, signal_color, signal_name, __, _ = signal_info
+            mean_value = np.mean(signal_values)
+            std_deviation = np.std(signal_values)
+            duration = time_values[-1] - time_values[0]
+            min_value = np.min(signal_values)
+            max_value = np.max(signal_values)
+
+            # Add a title for the signal
+            signal_title = f"{graph_name} {signal_info[3]}."
+            self.pdf_content.append(Table([[signal_title]], style=[
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ]))
+
+            # Add statistics to the table
+            table_data = [["Statistic", "Value"]]
+            stat_data = [
+                ["Mean", f"{mean_value:.2f}"],
+                ["Std Deviation", f"{std_deviation:.2f}"],
+                ["Duration", f"{duration:.2f}"],
+                ["Min", f"{min_value:.2f}"],
+                ["Max", f"{max_value:.2f}"],
+            ]
+            table_data.extend(stat_data)
+
+            # Create the table
+            table = Table(table_data, colWidths=[2 * inch, 2 * inch])
+            table.setStyle(TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            self.pdf_content.append(table)
 
     # A function that adds the table of statistcs to the pdf
     def add_table_to_pdf(self, data, title):
@@ -742,7 +732,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         if self.graph_2_active:
             self.show_message("SnapShot taken for Graph 2")
             self.save_graph_snapshot(self.graphicsView_2, "Graph 2")
-    
+
     # A function to determines how the snapshot of the graph is displayed
     def save_graph_snapshot(self, graphics_view, title):
         self.pdf_content.append(Table([[title]], style=[
