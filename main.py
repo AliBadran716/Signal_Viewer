@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsView
 from PyQt5.uic import loadUiType
 import pyqtgraph as pg
 import matplotlib.pyplot as plt
@@ -34,7 +34,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.shortcuts()
         self.graphicsView_1.setBackground('w')
         self.graphicsView_2.setBackground('w')
-        # A dict to save the data of all signals as pairs of keys and values, the key is a counter for the signals 
+        self.graphicsView_1.setMouseEnabled( x=False, y= False)
+        self.graphicsView_2.setMouseEnabled( x=False, y= False)
+        # A dict to save the data of all signals as pairs of keys and values, the key is a counter for the signals
         # The value is a list that contains the data of each signal in the form of :
         # [[x_values], [y_values], [color_of signal], label_of_signal, is_hide, file_name]
         self.signals_data_1 = {}
@@ -102,6 +104,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         y = (screen_height - window_height) // 2
         # Set the window's position to the center
         self.move(x, y)
+
+
 
     def on_mouse_click_1(self, event):
         if event.button() == pg.QtCore.Qt.LeftButton:
@@ -633,14 +637,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 # Title for the PDF
                 self.title_pdf()
 
-                # Check which graph is active and create tables accordingly
-                if self.graph_1_active and self.signals_data_1:
-                    self.add_statistics_tables(self.signals_data_1, "Graph 1")
-
-                    # Add statistics tables for Graph 2
-                if self.graph_2_active and self.signals_data_2:
-                    self.add_statistics_tables(self.signals_data_2, "Graph 2")
-
                 # Build and save the PDF document
                 doc.build(self.pdf_content)
 
@@ -653,18 +649,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 # Clear PDF content
                 self.pdf_content = []
 
-    # Add this function to generate tables for a specific graph
-    def add_table_to_pdf(self, graph_data):
-        # Add a title for the table
-        self.pdf_content.append(Table([[graph_data['graph_name']]], style=[
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-        ]))
-
         # Loop through the signal data and add tables for statistics
-
     def add_statistics_tables(self, graph_data, graph_name):
         for signal_index, signal_info in graph_data.items():
             time_values, signal_values, signal_color, signal_name, is_hidden, _ = signal_info
@@ -720,14 +705,19 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         if self.graph_1_active and self.graph_2_active:
             self.show_message("SnapShot taken for both Graphs")
             self.save_graph_snapshot(self.graphicsView_1, "Graph 1 & Graph 2")
+            self.add_statistics_tables(self.signals_data_1, "Graph 1")
             self.save_graph_snapshot(self.graphicsView_2, "Graph 1 & Graph 2")
+            self.add_statistics_tables(self.signals_data_2, "Graph 2")
             return
         if self.graph_1_active:
             self.show_message("SnapShot taken for Graph 1")
             self.save_graph_snapshot(self.graphicsView_1, "Graph 1")
+            self.add_statistics_tables(self.signals_data_1, "Graph 1")
+
         if self.graph_2_active:
             self.show_message("SnapShot taken for Graph 2")
             self.save_graph_snapshot(self.graphicsView_2, "Graph 2")
+            self.add_statistics_tables(self.signals_data_2, "Graph 2")
 
     # A function to determines how the snapshot of the graph is displayed
     def save_graph_snapshot(self, graphics_view, title):
