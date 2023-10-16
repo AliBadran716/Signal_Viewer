@@ -322,7 +322,7 @@ color: rgba(0, 0, 0, 0.50);</string>
                </widget>
               </item>
               <item>
-               <widget class="QSlider" name="move_y_slider">
+               <widget class="QSlider" name="move_y_slider_1">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -370,7 +370,7 @@ color: rgba(0, 0, 0, 0.50);</string>
                </spacer>
               </item>
               <item>
-               <widget class="QSlider" name="move_x_slider">
+               <widget class="QSlider" name="move_x_slider_1">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
                   <horstretch>0</horstretch>
@@ -520,6 +520,248 @@ color: rgba(0, 0, 0, 0.50);</string>
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0" colspan="4">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="10" column="1" colspan="2">
+         <widget class="QLineEdit" name="line_edit_g2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0" colspan="4">
+         <widget class="QCheckBox" name="show_g2_check_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Show Signal</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="3">
+         <widget class="QComboBox" name="color_g1_combo_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <item>
+           <property name="text">
+            <string>-----</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Red</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Blue</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Green</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Yellow</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Cyan</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Purple</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Orange</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="4">
+         <widget class="QPushButton" name="move_g1_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {background-color:white;}
+::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+          </property>
+          <property name="text">
+           <string>Move to graph 2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="color_lbl_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Color</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0" colspan="2">
+         <widget class="QComboBox" name="g_2_signals_combo_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>Graph 2 Signals</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="7" column="2" colspan="2">
+         <widget class="QPushButton" name="delete_g2_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+          </property>
+          <property name="text">
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QComboBox" name="g_1_signals_combo_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>30</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>Graph 1 Signals</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="10" column="3">
+         <widget class="QPushButton" name="save_lbl_g2_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {background-color:white;}
+
+::hover {
+    background-color: rgb(238, 238, 238); 
+    
+    color: black; 
+}</string>
+          </property>
+          <property name="text">
+           <string>Apply</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0" colspan="4">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="11" column="0" colspan="4">
+         <widget class="QPushButton" name="move_g2_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {background-color:white;}
+
+::hover {
+    background-color: rgb(238, 238, 238); 
+ 
+    color: black; 
+}</string>
+          </property>
+          <property name="text">
+           <string>Move to graph 1</string>
+          </property>
+         </widget>
+        </item>
         <item row="4" column="3">
          <widget class="QPushButton" name="save_lbl_g1_btn">
           <property name="sizePolicy">
@@ -567,16 +809,6 @@ color: rgba(0, 0, 0, 0.50);</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1" colspan="2">
-         <widget class="QLineEdit" name="line_edit_g1">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
         <item row="10" column="0">
          <widget class="QLabel" name="label_11">
           <property name="sizePolicy">
@@ -587,6 +819,16 @@ color: rgba(0, 0, 0, 0.50);</string>
           </property>
           <property name="text">
            <string>Label</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1" colspan="2">
+         <widget class="QLineEdit" name="line_edit_g1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
          </widget>
         </item>
@@ -627,61 +869,18 @@ color: rgba(0, 0, 0, 0.50);</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1" colspan="3">
-         <widget class="QComboBox" name="color_g1_combo_btn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+        <item row="12" column="0" colspan="4">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <item>
-           <property name="text">
-            <string>-----</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Red</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Blue</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Green</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="10" column="1" colspan="2">
-         <widget class="QLineEdit" name="line_edit_g2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
           </property>
-         </widget>
-        </item>
-        <item row="9" column="0" colspan="4">
-         <widget class="QCheckBox" name="show_g2_check_btn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Show Signal</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
+         </spacer>
         </item>
         <item row="8" column="1" colspan="3">
          <widget class="QComboBox" name="color_g2_combo_btn">
@@ -711,186 +910,27 @@ color: rgba(0, 0, 0, 0.50);</string>
             <string>Green</string>
            </property>
           </item>
-         </widget>
-        </item>
-        <item row="7" column="0" colspan="2">
-         <widget class="QComboBox" name="g_2_signals_combo_box">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>0</height>
-           </size>
-          </property>
           <item>
            <property name="text">
-            <string>Graph 2 Signals</string>
+            <string>Cyan</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Purple</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Orange</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Yellow</string>
            </property>
           </item>
          </widget>
-        </item>
-        <item row="8" column="0">
-         <widget class="QLabel" name="color_lbl_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Color</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="2" colspan="2">
-         <widget class="QPushButton" name="delete_g2_btn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">::hover {
-    background-color: rgb(238, 238, 238); 
-    
-    color: black; 
-}</string>
-          </property>
-          <property name="text">
-           <string>Delete</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0" colspan="4">
-         <widget class="QPushButton" name="move_g1_btn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton {background-color:white;}
-::hover {
-    background-color: rgb(238, 238, 238); 
-    
-    color: black; 
-}</string>
-          </property>
-          <property name="text">
-           <string>Move to graph 2</string>
-          </property>
-         </widget>
-        </item>
-        <item row="11" column="0" colspan="4">
-         <widget class="QPushButton" name="move_g2_btn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton {background-color:white;}
-
-::hover {
-    background-color: rgb(238, 238, 238); 
- 
-    color: black; 
-}</string>
-          </property>
-          <property name="text">
-           <string>Move to graph 1</string>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="3">
-         <widget class="QPushButton" name="save_lbl_g2_btn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton {background-color:white;}
-
-::hover {
-    background-color: rgb(238, 238, 238); 
-    
-    color: black; 
-}</string>
-          </property>
-          <property name="text">
-           <string>Apply</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0" colspan="4">
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QComboBox" name="g_1_signals_combo_box">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>30</height>
-           </size>
-          </property>
-          <item>
-           <property name="text">
-            <string>Graph 1 Signals</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="4">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="12" column="0" colspan="4">
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>

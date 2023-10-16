@@ -19,8 +19,8 @@ import os
 import sys
 from os import path
 
-
 FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main.ui"))  # connects the Ui file with the Python file
+
 
 class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_class file
 
@@ -45,13 +45,19 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graphicsView_1.setLabel('bottom', 'time')
         self.graphicsView_2.setLabel('bottom', 'time')
         # Initialization of the ranges of the sliders
-        self.move_y_slider.setMinimum(-50) 
-        self.move_y_slider.setMaximum(50)   
-        self.move_y_slider.setSliderPosition(0)
-        self.move_x_slider.setMinimum(-50) 
-        self.move_x_slider.setMaximum(50)   
-        self.move_x_slider.setSliderPosition(0)
-        self.graph_1_active = True  # Setting graph 1 active initially
+        self.move_y_slider_1.setMinimum(-50)
+        self.move_y_slider_1.setMaximum(50)
+        self.move_y_slider_1.setSliderPosition(0)
+        self.move_y_slider_2.setMinimum(-50)
+        self.move_y_slider_2.setMaximum(50)
+        self.move_y_slider_2.setSliderPosition(0)
+        self.move_x_slider_1.setMinimum(-100)
+        self.move_x_slider_1.setMaximum(0)
+        self.move_x_slider_1.setSliderPosition(0)
+        self.move_x_slider_2.setMinimum(-100)
+        self.move_x_slider_2.setMaximum(0)
+        self.move_x_slider_2.setSliderPosition(0)
+        self.graph_1_active = False
         self.graph_2_active = False
         self.is_playing_g_1 = True
         self.is_playing_g_2 = True
@@ -74,13 +80,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.end_2 = 616 * self.first_element_of_time
         self.load_data()
         self.show_signals = []
-        self.number_of_points_1 = 0 
+        self.number_of_points_1 = 0
         self.number_of_points_2 = 0
         self.start_flag_1 = False  # Determines whether a new signal ia added or not
         self.start_flag_2 = False
         self.terminal_flag_1 = False  # Determines the max value at which the plotting will terminate
         self.terminal_flag_2 = False
-        # Hanlding the pdf data
+        # Handling the pdf data
         self.pdf_content = []
         self.title_pdf()
         self.snapshot_path = ''
@@ -103,17 +109,16 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.graph_2_active = False
             self.graphicsView_1.setStyleSheet("border: 1px solid  rgb(0, 133, 255);;")
             self.graphicsView_2.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20);")
-        
-
 
     def on_mouse_click_2(self, event):
         if event.button() == pg.QtCore.Qt.LeftButton:
             self.graph_1_active = False
             self.graph_2_active = True
-            self.graphicsView_2.setStyleSheet("border: 1px solid  rgb(0, 133, 255);;")
             self.graphicsView_1.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20);")
+            self.graphicsView_2.setStyleSheet("border: 1px solid  rgb(0, 133, 255);;")
 
             # A function that connects the ui elements to function to handle them
+
     def handle_btn(self):
         # menu buttons
         self.graphicsView_1.scene().sigMouseClicked.connect(self.on_mouse_click_1)
@@ -122,10 +127,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.add_to_graph_2_btn.triggered.connect(self.add_signal_to_graph_2)
         self.make_pdf_btn.triggered.connect(self.capture_and_create_pdf)
         # graph buttons
-        self.move_y_slider.valueChanged.connect(self.onSliderValueChanged_y)
-        self.move_x_slider.valueChanged.connect(self.onSliderValueChanged_x)
-        #self.graph1_radio_btn.toggled.connect(self.graph1_selected)
-        #self.graph2_radio_btn.toggled.connect(self.graph2_selected)
+        self.move_y_slider_1.valueChanged.connect(self.onSliderValueChanged_y_1)
+        self.move_y_slider_2.valueChanged.connect(self.onSliderValueChanged_y_2)
+        self.move_x_slider_1.valueChanged.connect(self.onSliderValueChanged_x_1)
+        self.move_x_slider_2.valueChanged.connect(self.onSliderValueChanged_x_2)
         self.link_radio_btn.toggled.connect(self.link_selected)
         self.speed_selection.currentIndexChanged.connect(self.on_combobox_speed_selection)
         self.play_pause_btn.clicked.connect(self.play_pause)
@@ -145,15 +150,12 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.move_g1_btn.clicked.connect(self.move_signal_g_1)
         self.move_g2_btn.clicked.connect(self.move_signal_g_2)
 
-
     # A Function  that defines some shortcuts to make the work with our app more easier
     def shortcuts(self):
         # defining shortcuts
         self.sc_add_to_g_1 = QShortcut(QKeySequence('Ctrl+SHIFT+1'), self)
         self.sc_add_to_g_2 = QShortcut(QKeySequence('Ctrl+SHIFT+2'), self)
         self.sc_export = QShortcut(QKeySequence('Ctrl+E'), self)
-        self.sc_g1 = QShortcut(QKeySequence('Ctrl+1'), self)
-        self.sc_g2 = QShortcut(QKeySequence('Ctrl+2'), self)
         self.sc_link = QShortcut(QKeySequence('Ctrl+L'), self)
         self.sc_speed = QShortcut(QKeySequence('Ctrl+S'), self)
         self.sc_play = QShortcut(QKeySequence(' '), self)
@@ -165,8 +167,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.sc_add_to_g_1.activated.connect(self.add_signal_to_graph_1)
         self.sc_add_to_g_2.activated.connect(self.add_signal_to_graph_2)
         self.sc_export.activated.connect(self.capture_and_create_pdf)
-        self.sc_g1.activated.connect(self.graph1_selected)
-        self.sc_g2.activated.connect(self.graph2_selected)
         self.sc_link.activated.connect(self.link_selected)
         self.sc_speed.activated.connect(self.on_combobox_speed_selection)
         self.sc_play.activated.connect(self.play_pause)
@@ -174,33 +174,40 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.sc_zoom_in.activated.connect(self.zoom_in)
         self.sc_zoom_out.activated.connect(self.zoom_out)
         self.sc_rewind.activated.connect(self.rewind_graph)
-        
 
     # A function that detects the max y-value of all the signals in graph 1 
-    def max_range_1 (self):
+    def max_range_1(self):
         for value in self.signals_data_1.values():
             for search in value[1]:
-                if(search > self.max_y_1):
-                  self.max_y_1 = search
+                if (search > self.max_y_1):
+                    self.max_y_1 = search
 
     # A function that detects the max y-value of all the signals in graph 2
-    def max_range_2 (self):
+    def max_range_2(self):
         for value in self.signals_data_2.values():
             for search in value[1]:
-               if(search > self.max_y_2):
-                  self.max_y_2 = search
+                if (search > self.max_y_2):
+                    self.max_y_2 = search
 
     # A function that detects the colors of all signals in graph 1
-    def color_detect_1(self , signals_data_1):
+    def color_detect_1(self, signals_data_1):
         self.colors = []
         for value in signals_data_1.values():
-            if(value[2] == 'Red'):
-                self.colors.append((255 , 0 , 0))
+            if (value[2] == 'Red'):
+                self.colors.append((255, 0, 0))
             if (value[2] == 'Blue'):
-                self.colors.append( (0 , 0, 255)) 
+                self.colors.append((0, 0, 255))
             if (value[2] == 'Green'):
-                self.colors.append((0 , 250 , 0))       
-              
+                self.colors.append((0, 250, 0))
+            if (value[2] == 'Yellow'):
+                self.colors.append((250, 250, 0))
+            if (value[2] == 'Orange'):
+                self.colors.append((255, 102, 0))
+            if (value[2] == 'Purple'):
+                self.colors.append((128, 0, 128))
+            if (value[2] == 'Cyan'):
+                self.colors.append((0, 204, 255))
+
     # A function that detects the colors of all signals in graph 2
     def color_detect_2(self, signals_data_2):
         self.colors = []
@@ -211,93 +218,104 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 self.colors.append((0, 0, 255))
             if (value[2] == 'Green'):
                 self.colors.append((0, 250, 0))
-              
+            if (value[2] == 'Yellow'):
+                self.colors.append((250, 250, 0))
+            if (value[2] == 'Orange'):
+                self.colors.append((255, 102, 0))
+            if (value[2] == 'Purple'):
+                self.colors.append((128, 0, 128))
+            if (value[2] == 'Cyan'):
+                self.colors.append((0, 204, 255))
 
     # A function to determine the visibility of each signal based on the checkbox value in graph 1
     def show_hide_1(self, signals_data_1):
-        self.show_signals= []
+        self.show_signals = []
         for value in signals_data_1.values():
-            if(value[4] == True):
+            if (value[4] == True):
                 self.show_signals.append(True)
-            else :
+            else:
                 self.show_signals.append(False)
 
     # A function to determine the visibility of each signal based on the checkbox value in graph 1
     def show_hide_2(self, signals_data_1):
-        self.show_signals= []
+        self.show_signals = []
         for value in signals_data_1.values():
-            if(value[4] == True):
+            if (value[4] == True):
                 self.show_signals.append(True)
-            else :
+            else:
                 self.show_signals.append(False)
 
-    # A funbction that initilaizes graph 1 
-    def handle_graph_1(self , signals_data_1 ):
+    # A function that initializes graph 1
+    def handle_graph_1(self, signals_data_1):
         self.color_detect_1(signals_data_1)
         self.graphicsView_1.setObjectName("graphicsView_1")
         self.data_lines_1 = []
         self.file_names_1 = []
         self.graphicsView_1.setXRange(0, 616 * self.first_element_of_time)
         for value in signals_data_1.values():
-            self.file_names_1.append( value[5]) 
-        for i,file_name in enumerate(self.file_names_1):
-           pen = pg.mkPen(color=self.colors[i])
-           df = pd.read_csv(file_name)
-           x = df.iloc[:, 0].tolist()
-           y = df.iloc[:, 1].tolist()
-           data_line = self.graphicsView_1.plot(x, y, pen=pen)
-           data_line.x_data = x
-           data_line.y_data = y
-           self.data_lines_1.append(data_line)
+            self.file_names_1.append(value[5])
+        for i, file_name in enumerate(self.file_names_1):
+            pen = pg.mkPen(color=self.colors[i])
+            df = pd.read_csv(file_name)
+            x = df.iloc[:, 0].tolist()
+            y = df.iloc[:, 1].tolist()
+            data_line = self.graphicsView_1.plot(x, y, pen=pen)
+            data_line.x_data = x
+            data_line.y_data = y
+            self.data_lines_1.append(data_line)
         if not self.signals_data_1:
             return
-        self.end_1 = 616 * self.first_element_of_time # Sets the end of the x range
-       
+        self.end_1 = 616 * self.first_element_of_time  # Sets the end of the x range
+
         self.timer_1 = QtCore.QTimer()
         self.timer_1.setInterval(50)
         self.timer_1.timeout.connect(self.update_plot_data_1)
         self.timer_1.start()
+        self.timer_3 = QtCore.QTimer()
+        self.timer_3.setInterval(50)
+        self.timer_3.timeout.connect(self.restrict_x_range_1)
+        self.timer_3.start()
         self.max_range_1()
         self.graphicsView_1.setYRange(-self.max_y_1, self.max_y_1)
 
     # A function that updates the data being plotted on graph 1
-    def update_plot_data_1(self  ):
+    def update_plot_data_1(self):
         step_in_x = 9 * self.first_element_of_time
-        self.end_indx_1+=9
-        if(self.end_indx_1>=616 and self.end_indx_1<self.number_of_points_1):
+        self.end_indx_1 += 9
+        if (self.end_indx_1 >= 616 and self.end_indx_1 < self.number_of_points_1):
             self.start_1 = self.start_1 + step_in_x
-            
+
             self.end_1 = self.end_1 + step_in_x
-            
-        if (self.end_indx_1 <= 616 ):
-                self.graphicsView_1.setXRange(0, 616 * self.first_element_of_time)
+
+        if (self.end_indx_1 <= 616):
+            self.graphicsView_1.setXRange(0, 616 * self.first_element_of_time)
         else:
-            if(self.end_indx_1 > 616):
+            if (self.end_indx_1 > 616):
                 self.graphicsView_1.setXRange(self.start_1, self.end_1)
-        if(self.end_indx_1 >= self.number_of_points_1):
-              self.timer_1.stop()
-        for i,data_line in enumerate(self.data_lines_1):
-            if(self.start_flag_1 == False and i > 0):
-                    graph_1_act = self.graph_1_active
-                    graph_2_act = self.graph_2_active
-                    self.graph_1_active = True
-                    self.graph_2_active = False
-                    self.clear_graph()
-                    self.handle_graph_1(self.signals_data_1)
-                    self.start_flag_1 = True
-                    self.graph_1_active = graph_1_act
-                    self.graph_2_active = graph_2_act
+        if (self.end_indx_1 >= self.number_of_points_1):
+            self.timer_1.stop()
+        for i, data_line in enumerate(self.data_lines_1):
+            if (self.start_flag_1 == False and i > 0):
+                graph_1_act = self.graph_1_active
+                graph_2_act = self.graph_2_active
+                self.graph_1_active = True
+                self.graph_2_active = False
+                self.clear_graph()
+                self.handle_graph_1(self.signals_data_1)
+                self.start_flag_1 = True
+                self.graph_1_active = graph_1_act
+                self.graph_2_active = graph_2_act
             else:
                 x_data = data_line.x_data[:self.end_indx_1]
                 y_data = data_line.y_data[:self.end_indx_1]
                 data_line.setData(x_data, y_data)
-            
+
             self.color_detect_1(self.signals_data_1)
             data_line.setPen(self.colors[i])
             self.show_hide_1(self.signals_data_1)
             data_line.setVisible(self.show_signals[i])
 
-     # A funbction that initilaizes graph 2
+    # A function that initializes graph 2
     def handle_graph_2(self, signals_data_2):
         self.color_detect_2(signals_data_2)
         self.graphicsView_2.setObjectName("graphicsView_2")
@@ -325,51 +343,55 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.timer_2.setInterval(50)
         self.timer_2.timeout.connect(self.update_plot_data_2)
         self.timer_2.start()
+        self.timer_4 = QtCore.QTimer()
+        self.timer_4.setInterval(50)
+        self.timer_4.timeout.connect(self.restrict_x_range_2)
+        self.timer_4.start()
         self.max_range_2()
         self.graphicsView_2.setYRange(-self.max_y_2, self.max_y_2)
 
     # A function that updates the data being plotted on graph 2
     def update_plot_data_2(self):
         step_in_x = 9 * self.first_element_of_time
-        
+
         self.end_indx_2 += 9
         if (self.end_indx_2 >= 616 and self.end_indx_2 < self.number_of_points_2):
             self.start_2 = self.start_2 + step_in_x
             self.end_2 = self.end_2 + step_in_x
-            
+
         if (self.end_indx_2 <= 616):
             self.graphicsView_2.setXRange(0, 616 * self.first_element_of_time)
         else:
             if (self.end_indx_2 > 616):
                 self.graphicsView_2.setXRange(self.start_2, self.end_2)
-        
+
         if (self.end_indx_2 >= self.number_of_points_2):
             self.timer_2.stop()
             current_g_1 = self.graph_1_active
             current_g_2 = self.graph_2_active
         for i, data_line in enumerate(self.data_lines_2):
-            if(self.start_flag_2 == False and i > 0):
-                    graph_1_act = self.graph_1_active
-                    graph_2_act = self.graph_2_active
-                    self.graph_1_active = False
-                    self.graph_2_active = True
-                    self.clear_graph()
-                    self.handle_graph_2(self.signals_data_2)
-                    self.start_flag_2 = True
-                    self.graph_1_active = graph_1_act
-                    self.graph_2_active = graph_2_act
+            if (self.start_flag_2 == False and i > 0):
+                graph_1_act = self.graph_1_active
+                graph_2_act = self.graph_2_active
+                self.graph_1_active = False
+                self.graph_2_active = True
+                self.clear_graph()
+                self.handle_graph_2(self.signals_data_2)
+                self.start_flag_2 = True
+                self.graph_1_active = graph_1_act
+                self.graph_2_active = graph_2_act
             else:
                 x_data = data_line.x_data[:self.end_indx_2]
                 y_data = data_line.y_data[:self.end_indx_2]
                 data_line.setData(x_data, y_data)
 
-           
             self.color_detect_2(self.signals_data_2)
             data_line.setPen(self.colors[i])
             self.show_hide_2(self.signals_data_2)
             data_line.setVisible(self.show_signals[i])
 
-    # A function to let the user load the signal file, create another signal element in the dictionary, and send the file to the graph
+    # A function to let the user load the signal file, create another signal element in the dictionary, and send the
+    # file to the graph
     def add_signal_to_graph_1(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
@@ -384,53 +406,54 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             values_column = signal_data.iloc[:, 1]
             time_values = time_column.tolist()
             v_values = values_column.tolist()
-            self.first_element_of_time = time_values[1]-time_values[0] 
-            
+            self.first_element_of_time = time_values[1] - time_values[0]
 
-            if(self.terminal_flag_1 == False):
+            if (self.terminal_flag_1 == False):
                 self.max_x_1 = max(time_values)
                 self.number_of_points_1 = len(time_values)
                 self.terminal_flag_1 = True
             # Making a new item in the dictionary, the new signal is given a key, and the values is given according to its data
-            self.signals_data_1[self.count_signals_1] = [time_values, v_values, 'Red', f"{'Signal'} - {self.count_signals_1}",
-                                                     True, file_name]
+            self.signals_data_1[self.count_signals_1] = [time_values, v_values, 'Red',
+                                                         f"{'Signal'} - {self.count_signals_1}",
+                                                         True, file_name]
             self.g_1_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_1}")
             self.start_flag_1 = False
         self.handle_graph_1(self.signals_data_1)
         # Update the table with the latest data
         self.load_data()
 
-    # A function to let the user load the signal file, create another signal element in the dictionary, and send the file to the graph
+    # A function to let the user load the signal file, create another signal element in the dictionary, and send the
+    # file to the graph
     def add_signal_to_graph_2(self):
-            options = QFileDialog.Options()
-            options |= QFileDialog.ReadOnly
-            file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "","CSV Files (*.csv);;All Files (*)",
-                                                       options=options)
-            if file_path:
-                self.count_signals_2 += 1
-                file_name = file_path.split("/")[-1]
-                self.file_names_2.append(file_name)
-                signal_data = pd.read_csv(file_name)
-                time_column = signal_data.iloc[:, 0]
-                values_column = signal_data.iloc[:, 1]
-                time_values = time_column.tolist()
-                v_values = values_column.tolist()
-                self.first_element_of_time = time_values[1]-time_values[0] 
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)",
+                                                   options=options)
+        if file_path:
+            self.count_signals_2 += 1
+            file_name = file_path.split("/")[-1]
+            self.file_names_2.append(file_name)
+            signal_data = pd.read_csv(file_name)
+            time_column = signal_data.iloc[:, 0]
+            values_column = signal_data.iloc[:, 1]
+            time_values = time_column.tolist()
+            v_values = values_column.tolist()
+            self.first_element_of_time = time_values[1] - time_values[0]
 
-                if(self.terminal_flag_2 == False):
-                    self.max_x_2 = max(time_values)
-                    self.number_of_points_2 = len(time_values)
-                    self.terminal_flag_2 = True
-                self.signals_data_2[self.count_signals_2] = [time_values, v_values, 'Red',
-                                                             f"{'Signal'} - {self.count_signals_2}",
-                                                             True, file_name]
-                self.g_2_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_2}")
-                self.start_flag_2 = False
-            self.handle_graph_2(self.signals_data_2)
-            self.load_data()
+            if (self.terminal_flag_2 == False):
+                self.max_x_2 = max(time_values)
+                self.number_of_points_2 = len(time_values)
+                self.terminal_flag_2 = True
+            self.signals_data_2[self.count_signals_2] = [time_values, v_values, 'Red',
+                                                         f"{'Signal'} - {self.count_signals_2}",
+                                                         True, file_name]
+            self.g_2_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_2}")
+            self.start_flag_2 = False
+        self.handle_graph_2(self.signals_data_2)
+        self.load_data()
 
-
-    # A function that displays the data of the signal based on which signal has been selected from the comboBox in graph 1
+    # A function that displays the data of the signal based on which signal has been selected from the comboBox in
+    # graph 1
     def on_combobox_g_1_selection(self):
         selected_item_index = self.g_1_signals_combo_box.currentIndex()
         if not self.signals_data_1 or self.g_1_signals_combo_box.currentIndex() <= 0:
@@ -442,8 +465,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.line_edit_g1.setText(self.signals_data_1[selected_item_index][3])
             self.show_g1_check_btn.setChecked(self.signals_data_1[selected_item_index][4])
 
-
-    # A function that displays the data of the signal based on which signal has been selected from the comboBox in graph 2
+    # A function that displays the data of the signal based on which signal has been selected from the comboBox in
+    # graph 2
     def on_combobox_g_2_selection(self):
         selected_item_index = self.g_2_signals_combo_box.currentIndex()
         if not self.signals_data_2 or self.g_2_signals_combo_box.currentIndex() <= 0:
@@ -455,23 +478,21 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.line_edit_g2.setText(self.signals_data_2[selected_item_index][3])
             self.show_g2_check_btn.setChecked(self.signals_data_2[selected_item_index][4])
 
-    # A function that determines whether to show the signal of hide it, based on the the checkbox value in graph 1
+    # A function that determines whether to show the signal of hide it, based onthe checkbox value in graph 1
     def show_hide_signal_g_1(self):
         if not self.signals_data_1 or self.g_1_signals_combo_box.currentIndex() <= 0:
             return
         selected_item_index = self.g_1_signals_combo_box.currentIndex()
         checkbox_checked = self.show_g1_check_btn.isChecked()
         self.signals_data_1[selected_item_index][4] = checkbox_checked
-       
 
-    # A function that determines whether to show the signal of hide it, based on the the checkbox value in graph 2
+    # A function that determines whether to show the signal of hide it, based on the checkbox value in graph 2
     def show_hide_signal_g_2(self):
         if not self.signals_data_2 or self.g_2_signals_combo_box.currentIndex() <= 0:
             return
         selected_item_index = self.g_2_signals_combo_box.currentIndex()
         checkbox_checked = self.show_g2_check_btn.isChecked()
         self.signals_data_2[selected_item_index][4] = checkbox_checked
-        
 
     # A function that updates the data of the signal whenever the user change the data and press on save button in graph 1
     def save_changes_g1(self):
@@ -484,7 +505,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.signals_data_1[selected_item_index][2] = selected_color
         self.signals_data_1[selected_item_index][3] = label_text
         self.g_1_signals_combo_box.setItemText(selected_item_index, label_text)
-        
 
     # A function that updates the data of the signal whenever the user change the data and press on save button in graph 2
     def save_changes_g2(self):
@@ -497,7 +517,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.signals_data_2[selected_item_index][2] = selected_color
         self.signals_data_2[selected_item_index][3] = label_text
         self.g_2_signals_combo_box.setItemText(selected_item_index, label_text)
-        
 
     # A function to re-index the left signals after deleting anyone
     def reindex_dict_keys(self, dictionary):
@@ -553,17 +572,20 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             return
         selected_item_index = self.g_1_signals_combo_box.currentIndex()
         self.count_signals_2 += 1
-        self.signals_data_2[self.count_signals_2] = [self.signals_data_1[selected_item_index][0], self.signals_data_1[selected_item_index][1], 'Red',
+        self.signals_data_2[self.count_signals_2] = [self.signals_data_1[selected_item_index][0],
+                                                     self.signals_data_1[selected_item_index][1], 'Red',
                                                      f"{'Signal'} - {self.count_signals_2}",
                                                      True, self.signals_data_1[selected_item_index][5]]
         self.g_2_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_2}")
         self.number_of_points_2 = len(self.signals_data_1[selected_item_index][0])
         self.delete_signal_g_1()
+        graph_1_act = self.graph_1_active
+        graph_2_act = self.graph_2_active
         self.graph_1_active = True
         self.graph_2_active = True
         self.rewind_graph()
-        self.graph_1_active = self.graph1_radio_btn.isChecked()
-        self.graph_2_active = self.graph2_radio_btn.isChecked()
+        self.graph_1_active = graph_1_act
+        self.graph_2_active = graph_2_act
         self.load_data()
 
     # A Function used to move the signals from graph 1 to graph 2 after choosing them
@@ -579,11 +601,13 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.g_1_signals_combo_box.addItem(f"{'Signal'} - {self.count_signals_1}")
         self.number_of_points_1 = len(self.signals_data_2[selected_item_index][0])
         self.delete_signal_g_2()
+        graph_1_act = self.graph_1_active
+        graph_2_act = self.graph_2_active
         self.graph_1_active = True
         self.graph_2_active = True
         self.rewind_graph()
-        self.graph_1_active = self.graph1_radio_btn.isChecked()
-        self.graph_2_active = self.graph2_radio_btn.isChecked()
+        self.graph_1_active = graph_1_act
+        self.graph_2_active = graph_2_act
         self.load_data()
 
     # A Function used to capture snapshots for the garphs and create a pdf report
@@ -646,7 +670,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             time_values, signal_values, signal_color, signal_name, is_hidden, _ = signal_info
 
             # Check if the signal is not hidden
-            if  is_hidden:
+            if is_hidden:
                 # Proceed to add the statistics table
                 mean_value = np.mean(signal_values)
                 std_deviation = np.std(signal_values)
@@ -743,19 +767,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
         ]))
 
-    # A function that makes graph 1 selected 
-    def graph1_selected(self):
-        self.graph_1_active = True
-        self.graph_2_active = False
-
-    # A function that makes graph 2 selected 
-    def graph2_selected(self):
-        self.graph_1_active = False
-        self.graph_2_active = True
-
     # A function that makes both graph 1 and graph 2 selected 
     def link_selected(self):
-        if self.link_radio_btn.isChecked() :
+        if self.link_radio_btn.isChecked():
             self.graph_1_active = True
             self.graph_2_active = True
             self.graphicsView_1.setStyleSheet("border: 1px solid  rgb(0, 133, 255);;")
@@ -765,7 +779,8 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.graph_1_active = False
             self.graph_2_active = False
             self.graphicsView_1.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20)")
-            self.graphicsView_2.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20) ") 
+            self.graphicsView_2.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.20) ")
+            self.rewind_graph()
 
     # A function to select the speed of the graph
     def on_combobox_speed_selection(self):
@@ -778,7 +793,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         if self.graph_2_active:
             self.timer_2.setInterval(speed_list[speed_index])
 
- # A function that triggers between play and pause to control the flow of signals on graph
+    # A function that triggers between play and pause to control the flow of signals on graph
     def play_pause(self):
         if not self.signals_data_1 and not self.signals_data_2:
             return
@@ -816,7 +831,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.end_1 = 0.154
         if self.graph_2_active:
             if not self.signals_data_2:
-                 self.timer_2.stop()
+                self.timer_2.stop()
             self.graphicsView_2.clear()
             self.end_indx_2 = 50
             self.start_2 = 0
@@ -860,7 +875,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             if self.zoom_count_graph2 < 5:  # Set your desired limit
                 self.zoom(self.graphicsView_2, 1.3)
                 self.zoom_count_graph2 += 1
-    
+
     # A function that rewinds the selected graph, making the signals plotted again
     def rewind_graph(self):
         if not self.signals_data_1 and not self.signals_data_2:
@@ -882,30 +897,76 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.handle_graph_2(self.signals_data_2)
 
     # A function to change the value of the y-axis slider
-    def onSliderValueChanged_y(self, value):
-        if not self.signals_data_1 and not self.signals_data_2:
+    def onSliderValueChanged_y_1(self, value):
+        if not self.signals_data_1:
             return
         y_range_offset = 0.02 * value
-        if self.graph_1_active:
+        self.graphicsView_1.setYRange(-self.max_y_1 + y_range_offset, self.max_y_1 + y_range_offset)
+
+        if self.graph_1_active and self.graph_2_active:  # link
             self.graphicsView_1.setYRange(-self.max_y_1 + y_range_offset, self.max_y_1 + y_range_offset)
-        if self.graph_2_active:
             self.graphicsView_2.setYRange(-self.max_y_2 + y_range_offset, self.max_y_2 + y_range_offset)
 
+    def onSliderValueChanged_y_2(self, value):
+        if not self.signals_data_2:
+            return
+        if self.graph_1_active and self.graph_2_active:  # link
+            return
+        y_range_offset = 0.02 * value
+        self.graphicsView_2.setYRange(-self.max_y_2 + y_range_offset, self.max_y_2 + y_range_offset)
+
     # A function to change the value of the x-axis slider
-    def onSliderValueChanged_x(self, value):
-        if not self.signals_data_1 and not self.signals_data_2:
+    def onSliderValueChanged_x_1(self, value):
+        if not self.signals_data_1:
             return
         x_range_offset = 0.0098 * value
-        if self.graph_1_active:
+
+        if self.end_indx_1 <= 500:
+            self.graphicsView_1.setXRange(0 + x_range_offset, 0.154 + x_range_offset)
+        else:
+            self.graphicsView_1.setXRange(self.start_1 + x_range_offset, self.end_1 + x_range_offset)
+
+        if self.graph_1_active and self.graph_2_active:  # link
             if self.end_indx_1 <= 500:
                 self.graphicsView_1.setXRange(0 + x_range_offset, 0.154 + x_range_offset)
             else:
                 self.graphicsView_1.setXRange(self.start_1 + x_range_offset, self.end_1 + x_range_offset)
-        if self.graph_2_active:
+
             if self.end_indx_2 <= 500:
                 self.graphicsView_2.setXRange(0 + x_range_offset, 0.154 + x_range_offset)
             else:
                 self.graphicsView_2.setXRange(self.start_2 + x_range_offset, self.end_2 + x_range_offset)
+
+    def onSliderValueChanged_x_2(self, value):
+        if not self.signals_data_2:
+            return
+        if self.graph_1_active and self.graph_2_active:  # link
+            return
+
+        x_range_offset = 0.0098 * value
+
+        if self.end_indx_2 <= 500:
+            self.graphicsView_2.setXRange(0 + x_range_offset, 0.154 + x_range_offset)
+        else:
+            self.graphicsView_2.setXRange(self.start_2 + x_range_offset, self.end_2 + x_range_offset)
+
+    def restrict_x_range_1(self):
+        x_min_new, x_max_new = self.graphicsView_1.getViewBox().viewRange()[0]
+
+        if x_min_new > -0.005:
+            return
+        else:
+            x_min_new = 0
+            self.graphicsView_1.setXRange(x_min_new, 0.154)
+
+    def restrict_x_range_2(self):
+        x_min_new, x_max_new = self.graphicsView_2.getViewBox().viewRange()[0]
+
+        if x_min_new > -0.005:
+            return
+        else:
+            x_min_new = 0
+            self.graphicsView_2.setXRange(x_min_new, 0.154)
 
     # A function to load the data of the signals in the table
     def load_data(self):
@@ -983,6 +1044,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
         # Show the message box
         msgBox.exec()
+
 
 def main():  # method to start app
     app = QApplication(sys.argv)
