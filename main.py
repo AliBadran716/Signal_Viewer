@@ -1,20 +1,18 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsView
 from PyQt5.uic import loadUiType
 import pyqtgraph as pg
-import matplotlib.pyplot as plt
+
 import numpy as np
 import pandas as pd
-from pyqtgraph import PlotWidget, plot
-from PyQt5.QtWidgets import QGraphicsScene
+
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Image
 from reportlab.lib import colors
-from reportlab.platypus import KeepTogether
 from reportlab.lib.pagesizes import inch
+
 import os
 import sys
 from os import path
@@ -24,9 +22,8 @@ FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main.ui"))  # conn
 
 class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_class file
 
-    def __init__(self, parent=None):  # constructor to intiate the main window  in the design
+    def __init__(self, parent=None):  # constructor to initiate the main window  in the design
         super(MainApp, self).__init__(parent)
-        QMainWindow.__init__(self)
         self.setupUi(self)
         self.setGeometry(0, 0, 1300, 700)  # Initialization for the UI
         self.center_on_screen()
@@ -43,7 +40,6 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.signals_data_2 = {}
         self.file_names_1 = []  # A list to contain the file names being uploaded
         self.file_names_2 = []
-        # A list to contain the colors of the signals
         self.graphicsView_1.setLabel('bottom', 'time')
         self.graphicsView_2.setLabel('bottom', 'time')
         # Initialization of the ranges of the sliders
@@ -194,9 +190,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                     self.max_y_2 = search
 
     # A function that detects the colors of all signals in graph 1
-    def color_detect_1(self, signals_data_1):
+    def color_detect(self, signals_data):
         self.colors = []
-        for value in signals_data_1.values():
+        for value in signals_data.values():
             if (value[2] == 'Red'):
                 self.colors.append((255, 0, 0))
             if (value[2] == 'Blue'):
@@ -212,38 +208,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             if (value[2] == 'Cyan'):
                 self.colors.append((0, 204, 255))
 
-    # A function that detects the colors of all signals in graph 2
-    def color_detect_2(self, signals_data_2):
-        self.colors = []
-        for value in signals_data_2.values():
-            if (value[2] == 'Red'):
-                self.colors.append((255, 0, 0))
-            if (value[2] == 'Blue'):
-                self.colors.append((0, 0, 255))
-            if (value[2] == 'Green'):
-                self.colors.append((0, 250, 0))
-            if (value[2] == 'Yellow'):
-                self.colors.append((250, 250, 0))
-            if (value[2] == 'Orange'):
-                self.colors.append((255, 102, 0))
-            if (value[2] == 'Purple'):
-                self.colors.append((128, 0, 128))
-            if (value[2] == 'Cyan'):
-                self.colors.append((0, 204, 255))
-
-    # A function to determine the visibility of each signal based on the checkbox value in graph 1
-    def show_hide_1(self, signals_data_1):
+    # A function to determine the visibility of each signal based on the checkbox value in graphs
+    def show_hide(self, signals_data):
         self.show_signals = []
-        for value in signals_data_1.values():
-            if (value[4] == True):
-                self.show_signals.append(True)
-            else:
-                self.show_signals.append(False)
-
-    # A function to determine the visibility of each signal based on the checkbox value in graph 1
-    def show_hide_2(self, signals_data_1):
-        self.show_signals = []
-        for value in signals_data_1.values():
+        for value in signals_data.values():
             if (value[4] == True):
                 self.show_signals.append(True)
             else:
@@ -251,7 +219,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
 
     # A function that initializes graph 1
     def handle_graph_1(self, signals_data_1):
-        self.color_detect_1(signals_data_1)
+        self.color_detect(signals_data_1)
         self.graphicsView_1.setObjectName("graphicsView_1")
         self.data_lines_1 = []
         self.file_names_1 = []
@@ -314,14 +282,14 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 y_data = data_line.y_data[:self.end_indx_1]
                 data_line.setData(x_data, y_data)
 
-            self.color_detect_1(self.signals_data_1)
+            self.color_detect(self.signals_data_1)
             data_line.setPen(self.colors[i])
-            self.show_hide_1(self.signals_data_1)
+            self.show_hide(self.signals_data_1)
             data_line.setVisible(self.show_signals[i])
 
     # A function that initializes graph 2
     def handle_graph_2(self, signals_data_2):
-        self.color_detect_2(signals_data_2)
+        self.color_detect(signals_data_2)
         self.graphicsView_2.setObjectName("graphicsView_2")
         self.data_lines_2 = []
         self.file_names_2 = []
@@ -389,9 +357,9 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
                 y_data = data_line.y_data[:self.end_indx_2]
                 data_line.setData(x_data, y_data)
 
-            self.color_detect_2(self.signals_data_2)
+            self.color_detect(self.signals_data_2)
             data_line.setPen(self.colors[i])
-            self.show_hide_2(self.signals_data_2)
+            self.show_hide(self.signals_data_2)
             data_line.setVisible(self.show_signals[i])
 
     # A function to let the user load the signal file, create another signal element in the dictionary, and send the
@@ -482,7 +450,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
             self.line_edit_g2.setText(self.signals_data_2[selected_item_index][3])
             self.show_g2_check_btn.setChecked(self.signals_data_2[selected_item_index][4])
 
-    # A function that determines whether to show the signal of hide it, based onthe checkbox value in graph 1
+    # A function that determines whether to show the signal of hide it, based on the checkbox value in graph 1
     def show_hide_signal_g_1(self):
         if not self.signals_data_1 or self.g_1_signals_combo_box.currentIndex() <= 0:
             return
@@ -614,7 +582,7 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         self.graph_2_active = graph_2_act
         self.load_data()
 
-    # A Function used to capture snapshots for the garphs and create a pdf report
+    # A Function used to capture snapshots for the graphs and create a pdf report
     def capture_and_create_pdf(self):
         # Prompt the user to choose the destination directory and file name
         file_dialog = QFileDialog(self)
@@ -652,10 +620,10 @@ class MainApp(QMainWindow, FORM_CLASS):  # go to the main window in the form_cla
         # Loop through the signal data and add tables for statistics
     def add_statistics_tables(self, graph_data, graph_name):
         for signal_index, signal_info in graph_data.items():
-            time_values, signal_values, signal_color, signal_name, is_hidden, _ = signal_info
+            time_values, signal_values, signal_color, signal_name, is_shown, _ = signal_info
 
             # Check if the signal is not hidden
-            if is_hidden:
+            if is_shown:
                 # Proceed to add the statistics table
                 mean_value = np.mean(signal_values)
                 std_deviation = np.std(signal_values)
