@@ -1,4 +1,6 @@
 # Signal_Viewer
+![image](https://github.com/Muhannad159/Signal_Viewer/assets/110257687/48a51dfe-3664-439d-a04c-a445c31c3f7e)
+
 
 Vital signals monitor interface
 Signal Viewer Readme
