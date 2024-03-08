@@ -46,7 +46,10 @@ Signal Viewer enables users to capture snapshots of signals at specific moments 
 
 ## Demo Video
 
-For a visual demonstration of Signal Viewer's features and capabilities, please refer to the following video: [Signal Viewer Demo Video](https://drive.google.com/drive/folders/1H1tUPsod9sR3owt4DLxdgxuiZfqXZ6pJ?usp=sharing)
+For a visual demonstration of Signal Viewer's features and capabilities
+
+https://github.com/AliBadran716/Signal_Viewer/assets/102072821/45cdf2c1-be48-4bbb-9341-fdb3ddf805d5
+
 
 ## Contributors <a name = "Contributors"></a>
 
